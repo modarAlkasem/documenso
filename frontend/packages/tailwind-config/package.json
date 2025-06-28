@@ -1,0 +1,13 @@
+{
+  "name": "@documenso/tailwind-config",
+  "version": "0.0.0",
+  "main": "index.cjs",
+  "license": "MIT",
+  "devDependencies": {
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss-animate": "^1.0.7"
+  }
+}

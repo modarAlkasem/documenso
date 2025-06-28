@@ -1,0 +1,19 @@
+{
+  "name": "Documenso",
+  "short_name": "Documenso",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme": "#A2E771",
+  "icons": [
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

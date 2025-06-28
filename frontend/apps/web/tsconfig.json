@@ -1,0 +1,34 @@
+{
+  "extends": "@documenso/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowJs": true,
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ],
+      "contentlayer/generated": [
+        "./contentlayer/generated"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true,
+    "incremental": false
+  },
+  "include": [
+    "**/*.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+
+    // ".contentlayer/generated"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
