@@ -10,3 +10,8 @@ export const NEXT_PUBLIC_SIGNUP_DISABLED = () =>
 
 export const IS_BILLING_ENABLED = () =>
   env("NEXT_PUBLIC_FEATURE_BILLING_ENABLED");
+
+export const NEXT_PRIVATE_INNGEST_APP_ID = () =>
+  env("NEXT_PRIVATE_INNGEST_APP_ID");
+
+export const INNGEST_EVENT_KEY = () => env("INNGEST_EVENT_KEY");
