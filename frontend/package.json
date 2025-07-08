@@ -35,6 +35,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@swc/core": "^1.11.13",
+    "@trigger.dev/cli": "^3.3.12",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

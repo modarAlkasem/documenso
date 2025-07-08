@@ -30,6 +30,7 @@ import { Button } from "@documenso/ui/primitives/button";
 import { FcGoogle } from "react-icons/fc";
 import { FaIdCardClip } from "react-icons/fa6";
 import { useToast } from "@documenso/ui/primitives/use-toaste";
+import { trpc } from "@documenso/trpc/react";
 
 export type SignUpFormProps = {
   className?: string;
@@ -111,6 +112,8 @@ const SignUpForm = ({
   });
   const isSubmitting = form.formState.isSubmitting;
   const [name, url] = form.watch(["name", "url"]);
+
+  const { mutateAsync: signup } = trpc.auth.signup.useMutation();
   const onFormSubmit = async ({
     name,
     email,
@@ -118,7 +121,34 @@ const SignUpForm = ({
     signature,
     url,
   }: TSignUpFormSchema) => {
-    console.log(name);
+    try {
+      await signup({ name, email, password, signature, url });
+      router.push("/unverified-account");
+      toast({
+        title: "Registeration Successful",
+        description:
+          "You have successfully registered. Please verify your account by clicking on the link you received in the email.",
+        duration: 5000,
+      });
+    } catch (err) {
+      const error = AppError.parseError(err);
+      const errorMessage =
+        signupErrorMessages[error.code] ?? signupErrorMessages.INVALID_REQUEST;
+      if (
+        error.code === AppErrorCode.PROFILE_URL_TAKEN ||
+        error.code === AppErrorCode.PREMIUM_PROFILE_URL
+      ) {
+        form.setError("url", {
+          message: errorMessage,
+        });
+      } else {
+        toast({
+          title: "An error occured",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    }
   };
   const onNextClick = async () => {
     let isValid = await form.trigger([

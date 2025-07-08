@@ -9,6 +9,10 @@
   },
   "dependencies": {
     "@lingui/core": "^5.2.0",
-    "@lingui/react": "^5.2.0"
+    "@lingui/react": "^5.2.0",
+    "@trigger.dev/nextjs": "^3.3.12",
+    "@trigger.dev/sdk": "^3.3.17",
+    "next-auth": "^4.24.11",
+    "ts-pattern": "^5.7.1"
   }
 }

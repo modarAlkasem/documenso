@@ -6,11 +6,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinLengthValidator
 
-# Create your models here.
+# Project Imports
+from core.models import TimeStampedModel, UUIDModel, TimeStampedUUIDModel
 
 
-class Account(models.Model):
-    id = models.UUIDField(_("id"), primary_key=True, editable=False, default=uuid.uuid4)
+class Account(TimeStampedUUIDModel):
+
     user = models.ForeignKey(
         "auth.User",
         verbose_name=_("user"),
@@ -94,14 +95,13 @@ class Account(models.Model):
         null=True,
         help_text="Helps app to know if user logged out or if there is any change in user's session",
     )
-    created_at = models.DateTimeField(_("created at"), auto_now_add=True, blank=True)
-    updated_at = models.DateTimeField(
-        _("updated at"), auto_now=True, blank=True, null=True
-    )
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["provider", "provider_account_id"])
+            models.UniqueConstraint(
+                fields=["provider", "provider_account_id"],
+                name="provider_account_id_unique",
+            )
         ]
 
 
@@ -118,17 +118,20 @@ class PasswordResetToken(models.Model):
     )
     user = models.ForeignKey(
         "auth.User",
-        _("user"),
+        verbose_name=_("user"),
         on_delete=models.CASCADE,
         related_name="password_reset_tokens",
         related_query_name="password_reset_token",
     )
-    created_at = models.DateTimeField(_("created at"), auto_now_add=True, blank=True)
+    created_at = models.DateTimeField(
+        _("created at"),
+        auto_now_add=True,
+    )
 
     class Meta:
         ordering = ["-created_at"]
         verbose_name = _("password reset token")
-        plural_verbose_name = _("password reset tokens")
+        verbose_name_plural = _("password reset tokens")
 
 
 class VerificationToken(models.Model):
@@ -161,6 +164,7 @@ class VerificationToken(models.Model):
     user = models.ForeignKey(
         "auth.user",
         verbose_name=_("user"),
+        on_delete=models.CASCADE,
         blank=True,
         related_name="verification_tokens",
         related_query_name="verification_token",
@@ -169,4 +173,4 @@ class VerificationToken(models.Model):
 
     class Meta:
         verbose_name = _("verification token")
-        plural_verbose_name = _("verification tokens")
+        verbose_name_plural = _("verification tokens")
