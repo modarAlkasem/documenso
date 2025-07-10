@@ -9,8 +9,8 @@ export abstract class BaseJobProvider {
     _job: JobDefinition<N, T>
   ): void;
 
-  public abstract getApiHandler(
+  public abstract getApiHandler(): (
     req: NextApiRequest,
     res: NextApiResponse
-  ): (req: NextApiRequest, res: NextApiResponse) => Promise<Response>;
+  ) => Promise<Response | void>;
 }
