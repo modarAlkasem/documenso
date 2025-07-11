@@ -70,7 +70,7 @@ export class InngestJobProvider extends BaseJobProvider {
     });
   }
 
-  public getApiHandler(req: NextApiRequest, res: NextApiResponse) {
+  public getApiHandler() {
     const handler = createPagesRoute({
       client: this._client,
       functions: this._functions,
