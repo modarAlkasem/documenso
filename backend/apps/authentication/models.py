@@ -1,3 +1,6 @@
+# Python Imoprts
+import uuid
+
 # Django Imports
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -8,7 +11,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from core.models import TimeStampedModel, UUIDModel
 
 # App Imports
-from authentication.constants import RoleChoices, IdentityProviderChoices
+from authentication.constants import (
+    RoleChoices,
+    IdentityProviderChoices,
+    TokenIdentifierChoices,
+)
 
 
 class User(TimeStampedModel):
@@ -101,3 +108,47 @@ class Session(UUIDModel):
         related_query_name="session",
     )
     expires_at = models.DateTimeField(_("expires at"), blank=True)
+
+
+class VerificationToken(models.Model):
+    secondary_id = models.UUIDField(
+        _("secondary id"),
+        default=uuid.uuid4,
+        blank=True,
+        help_text="Extra unique ID",
+        unique=True,
+    )
+    identifier = models.CharField(
+        _("identifier"),
+        max_length=255,
+        validators=[MinLengthValidator(3)],
+        choices=TokenIdentifierChoices.choices,
+        blank=True,
+        help_text="Purpose or the target of token.",
+    )
+    token = models.TextField(
+        _("token"), blank=True, help_text="Actual token", unique=True
+    )
+    completed = models.BooleanField(
+        _("completed"),
+        default=False,
+        blank=True,
+        help_text="Specify whether token is used or not yet.",
+    )
+    expires_at = models.DateTimeField(
+        _("expires at"), blank=True, help_text="Specify when token gets expired"
+    )
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("user"),
+        on_delete=models.CASCADE,
+        blank=True,
+        related_name="verification_tokens",
+        related_query_name="verification_token",
+    )
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True, blank=True)
+
+    class Meta:
+        verbose_name = _("verification token")
+        verbose_name_plural = _("verification tokens")
+        ordering = ("-created_at",)

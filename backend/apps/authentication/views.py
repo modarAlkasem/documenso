@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 # App Imports
-from authentication.services.auth_service import AuthService
+from .services import AuthService, VerificationTokenService
 
 
 class AuthViewSet(ViewSet):
@@ -14,3 +14,10 @@ class AuthViewSet(ViewSet):
     @action(methods=["POST"], detail=False)
     def signup(self, request: Request) -> Response:
         return self.service.sign_up(request)
+
+
+class VerificationTokenViewSet(ViewSet):
+    service = VerificationTokenService()
+
+    def create(self, request: Request) -> Response:
+        return self.service.create(request)
