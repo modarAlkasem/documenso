@@ -28,13 +28,13 @@ class VerificationTokenService:
                 serializer.validated_data.get,
                 ("email", "identifier", "expires", "force"),
             )
-            user = User.objects.get(email=email)
+            user: User = User.objects.get(email=email)
+            if user.email_verified:
+                return Response(
+                    data="Email is already verified", status=status.HTTP_400_BAD_REQUEST
+                )
             recent_token: VerificationToken = user.verification_tokens.first()
-            print(recent_token.id)
-            print(
-                abs(recent_token.created_at - datetime.now(tz=timezone("UTC")))
-                < timedelta(minutes=5)
-            )
+
             if (
                 recent_token
                 and not force
