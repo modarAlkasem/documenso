@@ -13,7 +13,8 @@
   ],
   "scripts": {},
   "dependencies": {
-    "nodemailer": "^7.0.5"
+    "nodemailer": "^7.0.5",
+    "resend": "^4.7.0"
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.17"
