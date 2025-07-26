@@ -12,8 +12,15 @@ class UUIDModel(models.Model):
         abstract = True
 
 
-class TimeStampedModel(models.Model):
+class CreatedAtModel(models.Model):
     created_at = models.DateTimeField("created at", auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class TimeStampedModel(CreatedAtModel):
+
     updated_at = models.DateTimeField("updated at", auto_now=True)
 
     class Meta:
