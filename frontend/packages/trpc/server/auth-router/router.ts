@@ -17,7 +17,7 @@ export const authRouter = router({
     if (IS_BILLING_ENABLED() && url && url.length < 6) {
       throw new AppError(AppErrorCode.PREMIUM_PROFILE_URL, {
         message:
-          "Only subscribers can have username shorter than 5 characters.",
+          "Only subscribers can have username shorter than 6 characters.",
       });
     }
   }),

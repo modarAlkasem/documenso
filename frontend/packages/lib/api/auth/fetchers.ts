@@ -1,7 +1,26 @@
 import { API_BASE_URL } from "../../constants/app";
-import { CreateVerificationTokenPayload, VerificationToken } from "./types";
+import {
+  CreateVerificationTokenPayload,
+  VerificationToken,
+  SignupPayload,
+} from "./types";
 import { JSON_HEADERS } from "../common-headers";
 import * as JSON from "superjson";
+import type { User } from "../users/types";
+import { AppError, AppErrorCode } from "../../errors/app-error";
+
+export const signUp = async (payload: SignupPayload): Promise<User> => {
+  const result = await fetch(`${API_BASE_URL}/auth/signup/`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(payload),
+  });
+
+  if (!result.ok) throw new Error("Something went wrong!");
+
+  const json = await result.json();
+  return json.data;
+};
 
 export const createVerificationToken = async (
   payload: CreateVerificationTokenPayload
@@ -11,9 +30,19 @@ export const createVerificationToken = async (
     headers: JSON_HEADERS,
     body: JSON.stringify(payload),
   });
-
-  if (!result.ok) throw new Error("Something went wrong!");
-
   const json = await result.json();
+  if (!result.ok) {
+    switch (result.status) {
+      case 400:
+        if (json.errors && typeof json.errors === "object" && json.errors.url)
+          throw new AppError(AppErrorCode.ALREADY_EXISTS, {
+            message: "Profile username is taken",
+            userMessage: "The Profile username is already taken",
+          });
+
+        throw new AppError(AppErrorCode.ALREADY_EXISTS);
+    }
+  }
+
   return json.data;
 };

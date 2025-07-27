@@ -2,6 +2,14 @@ import type { APIResponse } from "../base-types";
 
 export type identifierOptions = "PASSKEY_CHALLENGE" | "confirmation-email";
 
+export type SignupPayload = {
+  name: string;
+  email: string;
+  password: string;
+  signature?: string | undefined | null;
+  url?: string | null;
+};
+
 export type CreateVerificationTokenPayload = {
   identifier: identifierOptions;
   email: string;
