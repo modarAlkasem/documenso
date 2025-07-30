@@ -5,6 +5,8 @@ import {
   NEXT_PUBLIC_SIGNUP_DISABLED,
 } from "@documenso/lib/constants/app";
 import { AppError, AppErrorCode } from "@documenso/lib/errors/app-error";
+import { createUser } from "@documenso/lib/server-only/user/create-user";
+import {jobsC}
 
 export const authRouter = router({
   signup: procedure.input(ZSignUpMutationSchema).mutation(async ({ input }) => {
@@ -20,5 +22,7 @@ export const authRouter = router({
           "Only subscribers can have username shorter than 6 characters.",
       });
     }
+    const user = await createUser({ name, email, password, url, signature });
+
   }),
 });

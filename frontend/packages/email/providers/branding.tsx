@@ -26,9 +26,11 @@ export const BrandingProvider = (props: {
   children: React.ReactNode;
   branding?: BrandingContextValue | undefined;
 }) => {
-  <BrandingContext value={props.branding ?? defaultBrandingContextValue}>
-    {props.children}
-  </BrandingContext>;
+  return (
+    <BrandingContext value={props.branding ?? defaultBrandingContextValue}>
+      {props.children}
+    </BrandingContext>
+  );
 };
 
 export const useBranding = () => {

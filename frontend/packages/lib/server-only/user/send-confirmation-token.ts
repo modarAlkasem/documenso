@@ -1,7 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-
 import { createVerificationToken } from "../../api/auth/fetchers";
 import { ONE_HOUR } from "../../constants/time";
+import { identifierOptions } from "../../api/auth/types";
 
 const IDENTIFIER = "confirmation-email";
 
@@ -13,19 +12,11 @@ export const sendConfirmationToken = async ({
   email,
   force = false,
 }: SendConfirmationTokenOptions) => {
-  const { mutate } = useMutation({
-    mutationKey: ["createVerificationToken"],
-    mutationFn: createVerificationToken,
-    onSuccess: (data, variables, context) => {},
-    onError: (err, variables, context) => {
-      throw new Error(err.message);
-    },
-  });
-
-  await mutate({
+  const payload = {
     email,
     force,
-    identifier: IDENTIFIER,
+    identifier: IDENTIFIER as identifierOptions,
     expires_at: new Date(Date.now() + ONE_HOUR),
-  });
+  };
+  const token = await createVerificationToken(payload);
 };

@@ -12,3 +12,4 @@ export * from "@react-email/text";
 export * from "@react-email/column";
 export * from "@react-email/row";
 export * from "@react-email/link";
+export * from "@react-email/tailwind";

@@ -71,8 +71,9 @@ export class ResendTransport implements Transport<SentMessageInfo> {
       .then((res) => {
         if (res.error) {
           const statusCode = RESEND_ERROR_CODES_BY_KEY[res.error.name] ?? 500;
-          throw new Error(
-            `[${statusCode}]:${res.error.name} ${res.error.message}`
+          callback(
+            new Error(`[${statusCode}]:${res.error.name} ${res.error.message}`),
+            null
           );
         }
         callback(null, res.data);
