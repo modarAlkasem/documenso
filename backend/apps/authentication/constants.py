@@ -19,3 +19,10 @@ class TokenIdentifierChoices(models.TextChoices):
 
     CONFIRMATION_EMAIL = "confirmation-email", _("Confirmation Email")
     PASSKEY_CHALLENGE = "PASSKEY_CHALLENGE", _("PASSKEY_CHALLENGE")
+
+
+class EmailVerificationTokenStatusChoices(models.TextChoices):
+    NOT_FOUND = "NOT_FOUND", "Not Found"
+    VERIFIED = "VERIFIED", "Verified"
+    EXPIRED = "EXPIRED", "Expired"
+    ALREADY_VERIFIED = "ALREADY_VERIFIED", "Already Verified"

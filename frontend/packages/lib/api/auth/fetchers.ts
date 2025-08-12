@@ -1,8 +1,10 @@
 import { API_BASE_URL } from "../../constants/app";
-import {
+import type {
   CreateVerificationTokenPayload,
   VerificationToken,
   SignupPayload,
+  VerifyTokenPayload,
+  VerifyTokenResponse,
 } from "./types";
 import { JSON_HEADERS } from "../common-headers";
 import * as JSON from "superjson";
@@ -44,5 +46,25 @@ export const createVerificationToken = async (
     }
   }
 
-  return json.data;
+  return json.data.data;
+};
+
+export const verifyToken = async ({
+  token,
+  identifier,
+}: VerifyTokenPayload): Promise<VerifyTokenResponse> => {
+  const result = await fetch(
+    `${API_BASE_URL}/auth/verification-tokens/verify/`,
+    {
+      method: "POST",
+      headers: JSON_HEADERS,
+      body: JSON.stringify({ token, identifier }),
+    }
+  );
+  if (!result.ok)
+    throw new Error(
+      "Something went wrong while verifying your email.Please try again."
+    );
+  const json = await result.json();
+  return json.data.data;
 };

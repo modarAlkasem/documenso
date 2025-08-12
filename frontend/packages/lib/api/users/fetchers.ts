@@ -22,5 +22,5 @@ export const getUserWithVerificationToken = async (
   }
 
   const json = await result.json();
-  return json.data;
+  return json.data.data;
 };

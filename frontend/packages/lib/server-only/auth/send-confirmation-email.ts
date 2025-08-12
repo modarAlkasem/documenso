@@ -8,6 +8,7 @@ import {
 
 import { getUserWithVerificationToken } from "../../api/users/fetchers";
 import { createElement } from "react";
+import { renderEmailWithI18N } from "../../utils/render-email-with-i18n";
 
 export interface SendConfirmationEmailProps {
   userId: number;
@@ -28,5 +29,25 @@ export const sendConfirmationEmail = async ({
   const confirmationTemplate = createElement(ConfirmEmail, {
     assetBaseUrl,
     confirmationLink,
+  });
+
+  const [html, text] = await Promise.all([
+    renderEmailWithI18N(confirmationTemplate),
+    renderEmailWithI18N(confirmationTemplate, {
+      plainText: true,
+    }),
+  ]);
+  return mailer.sendMail({
+    to: {
+      address: user.email,
+      name: user.name,
+    },
+    from: {
+      address: fromAddress || "",
+      name: fromName,
+    },
+    subject: "Please confirm your email",
+    text,
+    html,
   });
 };

@@ -1,6 +1,7 @@
 import { createVerificationToken } from "../../api/auth/fetchers";
 import { ONE_HOUR } from "../../constants/time";
 import { identifierOptions } from "../../api/auth/types";
+import { sendConfirmationEmail } from "../auth/send-confirmation-email";
 
 const IDENTIFIER = "confirmation-email";
 
@@ -19,4 +20,6 @@ export const sendConfirmationToken = async ({
     expires_at: new Date(Date.now() + ONE_HOUR),
   };
   const token = await createVerificationToken(payload);
+  await sendConfirmationEmail({ userId: token.user });
+  return { success: true };
 };

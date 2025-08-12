@@ -4,17 +4,25 @@ from pytz import timezone
 from datetime import datetime, timedelta
 import secrets
 
+# Django Imports
+from django.db.transaction import atomic
+
 # REST Framework Imports
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.utils.serializer_helpers import ReturnDict
+
 
 # App Imports
 from ..models import VerificationToken, User
 from ..serializers import (
     CreateVerificationTokenSerializer,
     VerificationTokenModelSerializer,
+    VerifyTokenRequestSerializer,
+    UserModelSerializer,
 )
+from ..constants import EmailVerificationTokenStatusChoices, TokenIdentifierChoices
 
 
 class VerificationTokenService:
@@ -57,3 +65,70 @@ class VerificationTokenService:
                 instance=verification_token
             ).data
             return Response(data=response_data, status=status.HTTP_201_CREATED)
+
+    def verify(self, request: Request) -> Response:
+        data = request.data
+        serializer = VerifyTokenRequestSerializer(data=data)
+
+        if not serializer.is_valid() and isinstance(serializer.errors, ReturnDict):
+            errors = serializer.errors
+            if errors.get("token") and "Invalid token" in errors.get("token"):
+                return Response(
+                    data={
+                        "status": EmailVerificationTokenStatusChoices.NOT_FOUND.value
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            return Response(data=errors, status=status.HTTP_400_BAD_REQUEST)
+
+        validated_data = serializer.validated_data
+        identifier = validated_data.get("identifier")
+        match identifier:
+
+            case TokenIdentifierChoices.CONFIRMATION_EMAIL.value:
+                return self.__verify_confirmation_email_token(
+                    validated_data.get("token")
+                )
+
+            case _:
+                pass
+
+    def __verify_confirmation_email_token(self, token: VerificationToken) -> Response:
+        token_status = None
+        user: User = token.user
+        now = datetime.now(tz=timezone("UTC"))
+        valid = now < token.expires_at
+
+        if not valid:
+            most_recent_token = VerificationToken.objects.filter(user=user).first()
+            if most_recent_token.created_at < (now - timedelta(hours=1)):
+                token_status = EmailVerificationTokenStatusChoices.EXPIRED.value
+
+        elif token.completed:
+            token_status = EmailVerificationTokenStatusChoices.ALREADY_VERIFIED.value
+        else:
+            try:
+                with atomic(durable=True):
+                    user.email_verified = now
+                    user.save()
+
+                    token.completed = True
+                    token.save()
+
+                    VerificationToken.objects.filter(expires_at__lt=now).delete()
+
+                    token_status = EmailVerificationTokenStatusChoices.VERIFIED.value
+            except:
+                return Response(
+                    data=None,
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+        response = {"status": token_status}
+        if EmailVerificationTokenStatusChoices.EXPIRED.value:
+            response["user"] = UserModelSerializer(instance=token.user).data
+
+        return Response(
+            data=response,
+            status=status.HTTP_200_OK,
+        )

@@ -21,3 +21,7 @@ class VerificationTokenViewSet(ViewSet):
 
     def create(self, request: Request) -> Response:
         return self.service.create(request)
+
+    @action(methods=["POST"], detail=False)
+    def verify(self, request: Request) -> Response:
+        return self.service.verify(request)

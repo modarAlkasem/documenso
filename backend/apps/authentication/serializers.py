@@ -9,7 +9,7 @@ from core.validators import EmailExistsValidator
 
 # App Imports
 from .models import User, VerificationToken
-from .constants import TokenIdentifierChoices
+from .constants import TokenIdentifierChoices, EmailVerificationTokenStatusChoices
 
 
 required_true_dict = {"required": True}
@@ -48,9 +48,24 @@ class CreateVerificationTokenSerializer(serializers.Serializer):
     identifier = serializers.ChoiceField(choices=TokenIdentifierChoices.choices)
     expires = serializers.DateTimeField()
 
+    def to_internal_value(self, data):
+        if "email" in data:
+            data["email"] = data["email"].strip().lower()
+        return super().to_internal_value(data)
+
 
 class VerificationTokenModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VerificationToken
         fields = "__all__"
+
+
+class VerifyTokenRequestSerializer(serializers.Serializer):
+
+    token = serializers.SlugRelatedField(
+        queryset=VerificationToken.objects.all(),
+        slug_field="token",
+        error_messages={"does_not_exist": "Invalid token"},
+    )
+    identifier = serializers.ChoiceField(choices=TokenIdentifierChoices.choices)

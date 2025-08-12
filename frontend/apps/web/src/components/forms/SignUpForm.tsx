@@ -168,7 +168,7 @@ const SignUpForm = ({
 
   const onSignUpWithGoogleClick = async () => {
     try {
-      await signIn("google", { callbackUrl: SIGN_UP_REDIRECT_PATH });
+      // await signIn("google", { callbackUrl: SIGN_UP_REDIRECT_PATH });
     } catch (err) {
       toast({
         title: "An unknown error occured",

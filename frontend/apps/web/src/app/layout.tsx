@@ -12,6 +12,7 @@ import {
 import { I18nClientProvider } from "@documenso/lib/client-only/providers/i18n.client";
 import { setupI18nSSR } from "@documenso/lib/client-only/providers/i18n.server";
 import { Toaster } from "@documenso/ui/primitives/toaster";
+import { TRPCProvider } from "@documenso/trpc/react";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -93,12 +94,15 @@ export default async function RootLayout({
       </head>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <I18nClientProvider
-            initialMessages={i18n.messages}
-            initialLocaleData={{ lang, locales }}
-          >
-            {children}
-          </I18nClientProvider>
+          <TRPCProvider>
+            {" "}
+            <I18nClientProvider
+              initialMessages={i18n.messages}
+              initialLocaleData={{ lang, locales }}
+            >
+              {children}
+            </I18nClientProvider>
+          </TRPCProvider>
         </ThemeProvider>
         <Toaster />
       </body>
