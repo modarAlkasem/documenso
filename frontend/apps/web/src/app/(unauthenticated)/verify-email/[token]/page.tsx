@@ -7,8 +7,8 @@ import { match } from "ts-pattern";
 import { encryptSecondaryData } from "@documenso/lib/server-only/crypto/encrypt";
 import { Button } from "@documenso/ui/primitives/button";
 import {
+  EMAIL_VERIFICATION_STATE,
   verifyEmail,
-  type EMAIL_VERIFICATION_STATE,
 } from "@documenso/lib/server-only/user/verify-email";
 
 export type VerifyEmailProps = {
@@ -35,4 +35,53 @@ export default async function VerifyEmailPage({
       </div>
     );
   }
+
+  const verified = await verifyEmail({ token });
+  return await match(verified)
+    .with(EMAIL_VERIFICATION_STATE.NOT_FOUND, () => {
+      return (
+        <div className="w-screen max-w-lg px-4">
+          <div className="flex w-full items-start">
+            <div className="mr-4 mt-1 hidden md:block">
+              <AlertTriangle
+                className="h-10 w-10 text-yellow-500"
+                strokeWidth={2}
+              />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold md:text-4xl">
+                Something went wrong
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                We were unable to verify your email. If your email is not
+                verified already, please try again.
+              </p>
+              <Button className="mt-4" asChild>
+                <Link href="/">Go back home</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    })
+    .with(EMAIL_VERIFICATION_STATE.EXPIRED, () => (
+      <div className="w-screen max-w-lg px-4">
+        <div className="flex w-full items-start">
+          <div className="mr-4 mt-1 hidden md:block">
+            <XCircle className="h-10 w-10 text-destructive" strokeWidth={2} />
+          </div>
+          <div>
+            <h2 className="font-bold text-2xl md:text-4xl"></h2>
+            <p className="text-muted-foreground mt-4">
+              It seems that the provided token has expired. We've just sent you
+              another token, please check your email and try again.
+            </p>
+            <Button asChild className="mt-4">
+              <Link href="/"> Go back home</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    ))
+    .with(EMAIL_VERIFICATION_STATE.VERIFIED, async () => {});
 }

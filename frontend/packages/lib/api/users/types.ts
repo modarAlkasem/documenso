@@ -4,11 +4,11 @@ export type UserRole = "USER" | "ADMIN";
 export type UserIdentityProvider = "DOCUMENSO" | "GOOGLE" | "OIDC";
 
 export type User = {
-  id: string;
+  id: number;
   name: string;
   customer_id?: string | null;
   email: string;
-  email_verified: boolean;
+  email_verified: Date;
   password: string;
   source?: string | null;
   signature?: string | null;
@@ -22,3 +22,5 @@ export type User = {
 export type UserWithVerificationToken = User & {
   verification_token: VerificationToken;
 };
+
+export type UpdateUserPayload = Partial<Omit<User, "id">> & { id: number };

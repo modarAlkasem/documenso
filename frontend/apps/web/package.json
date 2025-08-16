@@ -21,6 +21,7 @@
     "lucide-react": "^0.484.0",
     "luxon": "^3.7.1",
     "next": "15.1.6",
+    "next-auth": "^4.24.11",
     "next-axiom": "^1.9.1",
     "next-runtime-env": "^3.2.2",
     "perfect-freehand": "^1.2.2",

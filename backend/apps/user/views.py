@@ -20,3 +20,14 @@ class UserViewSet(ViewSet):
     @action(detail=True, url_path="with-recent-token")
     def retrieve_with_recent_token(self, request: Request, pk: UUID) -> Response:
         return self.service.retrieve_with_recent_token(request, pk)
+
+
+class UnauthUserViewSet(ViewSet):
+    service = UserService()
+
+    def partial_update(self, request: Request, pk: int) -> Response:
+        return self.service.unauth_partial_update(request, pk)
+
+    @action(detail=False, url_path="retrieve-by-email")
+    def retrieve_by_email(self, request: Request) -> Response:
+        return self.service.retrieve_by_email(request, pk)

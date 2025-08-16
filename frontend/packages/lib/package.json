@@ -19,6 +19,7 @@
     "luxon": "^3.7.1",
     "micro": "^10.0.1",
     "next-auth": "^4.24.11",
+    "next-runtime-env": "^3.3.0",
     "ts-pattern": "^5.7.1"
   }
 }
