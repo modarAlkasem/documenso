@@ -24,3 +24,8 @@ export type UserWithVerificationToken = User & {
 };
 
 export type UpdateUserPayload = Partial<Omit<User, "id">> & { id: number };
+
+export type GetUserByUniqueFieldPayload = {
+  field: "id" | "email" | "url";
+  value: number | string;
+};

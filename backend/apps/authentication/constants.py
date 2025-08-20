@@ -26,3 +26,24 @@ class EmailVerificationTokenStatusChoices(models.TextChoices):
     VERIFIED = "VERIFIED", "Verified"
     EXPIRED = "EXPIRED", "Expired"
     ALREADY_VERIFIED = "ALREADY_VERIFIED", "Already Verified"
+
+
+class UserSecurityAuditLogTypeChoices(models.TextChoices):
+
+    ACCOUNT_PROFILE_UPDATE = "ACCOUNT_PROFILE_UPDATE", "Account Profile Update"
+    ACCOUNT_SSO_LINK = "ACCOUNT_SSO_LINK", "Account SSO Link"
+    AUTH_2FA_DISABLE = "AUTH_2FA_DISABLE", "Auth 2FA Disable"
+    AUTH_2FA_ENABLE = "AUTH_2FA_ENABLE", "Auth 2FA Enable"
+    PASSKEY_CREATED = "PASSKEY_CREATED", "PassKey Created"
+    PASSKEY_UPDATED = "PASSKEY_UPDATED", "PassKey Updated"
+    PASSKEY_DELETED = "PASSKEY_DELETED", "PassKey Deleted"
+    PASSWORD_RESET = "PASSWORD_RESET", "Password Reset"
+    PASSWORD_UPDATE = "PASSWORD_UPDATE", "Password Update"
+    SIGN_IN = "SIGN_IN", "Sign In"
+    SIGN_OUT = "SIGN_OUT", "Sign Out"
+    SIGN_IN_FAIL = "SIGN_IN_FAIL", "Sign In "
+    SIGN_IN_2FA_FAIL = "SIGN_IN_2FA_FAIL", "2FA Sign In Failed "
+    SIGN_IN_PASSKEY_FAIL = "SIGN_IN_PASSKE_FAIL", "PASSKEY Sign In Failed "
+
+
+UserUniqueFieldChoices = ("id", "email", "url")

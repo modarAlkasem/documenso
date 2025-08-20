@@ -15,6 +15,7 @@ from authentication.constants import (
     RoleChoices,
     IdentityProviderChoices,
     TokenIdentifierChoices,
+    UserSecurityAuditLogTypeChoices,
 )
 
 
@@ -151,4 +152,28 @@ class VerificationToken(models.Model):
     class Meta:
         verbose_name = _("verification token")
         verbose_name_plural = _("verification tokens")
+        ordering = ("-created_at",)
+
+
+class UserSecurityAuditLog(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="security_audit_logs",
+        related_query_name="security_audit_log",
+        blank=True,
+    )
+    type = models.CharField(
+        "type",
+        max_length=25,
+        choices=UserSecurityAuditLogTypeChoices.choices,
+        blank=True,
+    )
+    ip_address = models.GenericIPAddressField("IP address", blank=True, null=True)
+    user_agent = models.TextField("user agent", blank=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True, blank=True)
+
+    class Meta:
+        verbose_name = "user security audit log"
+        verbose_name_plural = "user security audit logs"
         ordering = ("-created_at",)

@@ -5,8 +5,10 @@ import type {
   SignupPayload,
   VerifyTokenPayload,
   VerifyTokenResponse,
+  createSecurityLogPayload,
+  GetVerificationTokenWithUserResponse,
 } from "./types";
-import { JSON_HEADERS } from "../common-headers";
+import { JSON_HEADERS, ACCEPT_JSON_HEADER } from "../common-headers";
 import * as JSON from "superjson";
 import type { User } from "../users/types";
 import { AppError, AppErrorCode } from "../../errors/app-error";
@@ -67,4 +69,42 @@ export const verifyToken = async ({
     );
   const json = await result.json();
   return json.data.data;
+};
+
+export const getVerificationTokenWithUser = async (
+  token: string
+): Promise<GetVerificationTokenWithUserResponse> => {
+  const result = await fetch(
+    `${API_BASE_URL}/auth/verification-tokens/retrieve-by-token/?token=${token}`,
+    {
+      headers: ACCEPT_JSON_HEADER,
+    }
+  );
+  if (!result.ok) {
+    switch (result.status) {
+      case 404:
+        throw new Error("There is no verification token with given \'token\'");
+
+      default:
+        throw new Error("Something went wrong!");
+    }
+  }
+
+  const json = await result.json();
+  return json.data.data;
+};
+
+export const createSecurityLog = async ({
+  userId,
+  type,
+  ipAddress,
+  userAgent,
+}: createSecurityLogPayload): Promise<void> => {
+  const result = await fetch(`${API_BASE_URL}/auth/security-logs/`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ userId, type, ipAddress, userAgent }),
+  });
+
+  if (!result.ok) throw new Error("Something went wrong.");
 };

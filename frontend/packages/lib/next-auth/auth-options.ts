@@ -11,8 +11,13 @@ import type { JWT } from "next-auth/jwt";
 import { env } from "next-runtime-env";
 import { DateTime } from "luxon";
 
-import { getUser, getUserByEmail, updateUser } from "../api/users/fetchers";
+import {
+  getUser,
+  getUserByUniqueField,
+  updateUser,
+} from "../api/users/fetchers";
 import { User } from "../api/users/types";
+import { formatSecureCookieName, useSecureCookies } from "../constants/auth";
 
 export const NEXT_AUTH_OPTIONS: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET ?? "secret",
@@ -25,7 +30,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
       clientSecret: env("GOOGLE_SECRET_KEY") ?? "",
       profile(profile) {
         return {
-          id: profile.sub,
+          id: Number(profile.sub),
           name:
             profile.name ||
             `${profile.given_name} ${profile.family_name}`.trim(),
@@ -39,7 +44,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
 
     CredentialsProvider({
       id: "manual",
-      name: "manual",
+      name: "Manual",
       credentials: {
         credential: { label: "Credential", type: "credential" },
       },
@@ -160,12 +165,61 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
       }
 
       if (env("NEXT_PUBLIC_DISABLE_SIGNUP") === "true") {
-        const userData = await getUserByEmail(user.email!);
+        const userData = await getUserByUniqueField({
+          field: "email",
+          value: user.email!,
+        });
 
         return !!userData;
       }
 
       return true;
+    },
+  },
+  cookies: {
+    sessionToken: {
+      name: formatSecureCookieName("next-auth.session-token"),
+      options: {
+        httpOnly: true,
+        sameSite: useSecureCookies ? "none" : "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    callbackUrl: {
+      name: formatSecureCookieName("next-auth.callback-url"),
+      options: {
+        sameSite: useSecureCookies ? "none" : "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    csrfToken: {
+      name: formatSecureCookieName("next-auth.csrf-token"),
+      options: {
+        httpOnly: true,
+        sameSite: useSecureCookies ? "none" : "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    pkceCodeVerifier: {
+      name: formatSecureCookieName("next-auth.pkce.code_verifier"),
+      options: {
+        httpOnly: true,
+        sameSite: useSecureCookies ? "none" : "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
+    },
+    state: {
+      name: formatSecureCookieName("next-auth.state"),
+      options: {
+        httpOnly: true,
+        sameSite: useSecureCookies ? "none" : "lax",
+        path: "/",
+        secure: useSecureCookies,
+      },
     },
   },
 };

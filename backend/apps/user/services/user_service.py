@@ -6,13 +6,17 @@ from rest_framework.exceptions import ValidationError
 
 # Project Imports
 from authentication.models import User
+from authentication.constants import UserUniqueFieldChoices
 from authentication.serializers import (
     UserModelSerializer,
     VerificationTokenModelSerializer,
 )
 
 # App Imports
-from ..serializers import RetrieveUserWithEmailSerializer
+from ..serializers import (
+    RetrieveUserWithEmailSerializer,
+    CheckUserUniqueFieldValueParamSerializer,
+)
 
 
 class UserService:
@@ -44,23 +48,32 @@ class UserService:
             status=status.HTTP_200_OK,
         )
 
-    def retrieve_by_email(self, request: Request) -> Response:
+    def retrieve_by_unique_field(self, request: Request) -> Response:
 
-        try:
-            serializer = RetrieveUserWithEmailSerializer(
-                data=request.query_params.get()
-            )
-            if serializer.is_valid(raise_exception=True):
-                user = serializer.validated_data["email"]
-                return Response(
-                    data=UserModelSerializer(instance=user).data,
-                    status=status.HTTP_200_OK,
-                )
+        query_params = request.query_params
+        field_query_param = query_params.get("field")
+        value_query_param = query_params.get("value")
 
-        except ValidationError:
+        if not field_query_param and field_query_param not in UserUniqueFieldChoices:
             return Response(
-                data={"email": "No user with this email"},
-                status=status.HTTP_404_NOT_FOUND,
+                data={"field": "'field' query param is invalid or not provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not value_query_param:
+            return Response(
+                data={"value": "'value' query param is invalid or not provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        data = {field_query_param: value_query_param}
+        serializer = CheckUserUniqueFieldValueParamSerializer(data=data)
+
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.validated_data[field_query_param]
+            return Response(
+                data=UserModelSerializer(instance=user).data,
+                status=status.HTTP_200_OK,
             )
 
     def unauth_partial_update(self, request: Request, pk: int) -> Response:

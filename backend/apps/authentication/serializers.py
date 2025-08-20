@@ -8,7 +8,7 @@ from rest_framework import serializers
 from core.validators import EmailExistsValidator
 
 # App Imports
-from .models import User, VerificationToken
+from .models import User, VerificationToken, UserSecurityAuditLog
 from .constants import TokenIdentifierChoices, EmailVerificationTokenStatusChoices
 
 
@@ -69,3 +69,23 @@ class VerifyTokenRequestSerializer(serializers.Serializer):
         error_messages={"does_not_exist": "Invalid token"},
     )
     identifier = serializers.ChoiceField(choices=TokenIdentifierChoices.choices)
+
+
+class UserSecurityAuditLogModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = UserSecurityAuditLog
+        fields = "__all__"
+
+
+class RetrieveVerificationTokenByTokenSerializer(VerifyTokenRequestSerializer):
+
+    identifier = None
+
+
+class VerificationTokenWithUserModelSerializer(VerificationTokenModelSerializer):
+    user = UserModelSerializer(required=True)
+
+    class Meta(VerificationTokenModelSerializer.Meta):
+        pass

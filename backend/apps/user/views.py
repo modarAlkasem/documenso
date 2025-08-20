@@ -28,6 +28,6 @@ class UnauthUserViewSet(ViewSet):
     def partial_update(self, request: Request, pk: int) -> Response:
         return self.service.unauth_partial_update(request, pk)
 
-    @action(detail=False, url_path="retrieve-by-email")
-    def retrieve_by_email(self, request: Request) -> Response:
-        return self.service.retrieve_by_email(request, pk)
+    @action(detail=False, url_path="retrieve")
+    def retrieve_by_unique_field(self, request: Request) -> Response:
+        return self.service.retrieve_by_unique_field(request)

@@ -21,6 +21,8 @@ from ..serializers import (
     VerificationTokenModelSerializer,
     VerifyTokenRequestSerializer,
     UserModelSerializer,
+    VerificationTokenWithUserModelSerializer,
+    RetrieveVerificationTokenByTokenSerializer,
 )
 from ..constants import EmailVerificationTokenStatusChoices, TokenIdentifierChoices
 
@@ -132,3 +134,18 @@ class VerificationTokenService:
             data=response,
             status=status.HTTP_200_OK,
         )
+
+    def retrieve_by_token(self, request: Request) -> Response:
+        query_params = request.query_params.get()
+        serializer = RetrieveVerificationTokenByTokenSerializer(data=query_params)
+
+        if serializer.is_valid(raise_exception=True):
+            token = serializer.validated_data.get("token")
+
+            response_data = VerificationTokenWithUserModelSerializer(
+                instance=token
+            ).data
+            return Response(
+                data=response_data,
+                status=status.HTTP_200_OK,
+            )

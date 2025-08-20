@@ -2,7 +2,11 @@ import { UserWithVerificationToken } from "./types";
 import { API_BASE_URL } from "../../constants/app";
 import { ACCEPT_JSON_HEADER, JSON_HEADERS } from "../common-headers";
 import { AppError, AppErrorCode } from "../../errors/app-error";
-import type { User, UpdateUserPayload } from "./types";
+import type {
+  User,
+  UpdateUserPayload,
+  GetUserByUniqueFieldPayload,
+} from "./types";
 
 export const getUser = async (userId: number): Promise<User> => {
   const result = await fetch(`${API_BASE_URL}/users/${userId}/`);
@@ -59,9 +63,12 @@ export const updateUser = async ({
   return json.data.data;
 };
 
-export const getUserByEmail = async (email: string): Promise<User> => {
+export const getUserByUniqueField = async ({
+  field,
+  value,
+}: GetUserByUniqueFieldPayload): Promise<User> => {
   const result = await fetch(
-    `${API_BASE_URL}/users/retrieve-by-email/?email=${email}`,
+    `${API_BASE_URL}/users/retrieve-by-email/?field=${field}&value=${value}`,
     {
       headers: ACCEPT_JSON_HEADER,
     }
@@ -69,7 +76,10 @@ export const getUserByEmail = async (email: string): Promise<User> => {
   if (!result.ok) {
     switch (result.status) {
       case 404:
-        throw new Error("There is no user with given \'email\'");
+        throw new Error(`There is no user with given \'${field}\'`);
+
+      case 400:
+        throw new Error(`Invalid or missing search params.`);
 
       default:
         throw new Error("Something went wrong!");
