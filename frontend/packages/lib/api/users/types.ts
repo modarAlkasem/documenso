@@ -4,18 +4,19 @@ export type UserRole = "USER" | "ADMIN";
 export type UserIdentityProvider = "DOCUMENSO" | "GOOGLE" | "OIDC";
 
 export type User = {
-  id: number;
+  id?: number;
   name: string;
+  type?: string | null;
   customer_id?: string | null;
   email: string;
-  email_verified: Date;
-  password: string;
+  email_verified?: Date;
+  password?: string | null;
   source?: string | null;
   signature?: string | null;
-  last_signed_in: Date;
-  roles: UserRole[];
-  identity_provider: UserIdentityProvider;
-  disabled: boolean;
+  last_signed_in?: Date | null;
+  roles?: UserRole[];
+  identity_provider?: UserIdentityProvider;
+  disabled?: boolean;
   url?: string | null;
 };
 

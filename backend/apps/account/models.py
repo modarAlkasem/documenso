@@ -7,13 +7,13 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinLengthValidator
 
 # Project Imports
-from core.models import TimeStampedModel, UUIDModel, TimeStampedUUIDModel
+from core.models import TimeStampedUUIDModel
 
 
 class Account(TimeStampedUUIDModel):
 
     user = models.ForeignKey(
-        "auth.User",
+        "authentication.User",
         verbose_name=_("user"),
         on_delete=models.CASCADE,
         related_name="accounts",
@@ -25,6 +25,7 @@ class Account(TimeStampedUUIDModel):
         _("type"),
         max_length=50,
         blank=True,
+        null=True,
         validators=[MinLengthValidator(1)],
         help_text="Specify how user is being authenticated (e.g. credentials, oauth).",
     )
@@ -117,7 +118,7 @@ class PasswordResetToken(models.Model):
         help_text="Specify when access token or session will expire.",
     )
     user = models.ForeignKey(
-        "auth.User",
+        "authentication.User",
         verbose_name=_("user"),
         on_delete=models.CASCADE,
         related_name="password_reset_tokens",

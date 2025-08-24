@@ -15,7 +15,7 @@ class UserProfile(User):
     enabled = models.BooleanField(_("enabled"), default=False)
     bio = models.TextField(_("bio"), blank=True, null=True)
     user = models.OneToOneField(
-        "auth.User",
+        "authentication.User",
         verbose_name=_("profile"),
         on_delete=models.CASCADE,
         related_name="profile",

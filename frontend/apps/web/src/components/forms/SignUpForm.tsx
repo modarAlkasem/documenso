@@ -31,6 +31,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaIdCardClip } from "react-icons/fa6";
 import { useToast } from "@documenso/ui/primitives/use-toaste";
 import { trpc } from "@documenso/trpc/react";
+import { signIn } from "next-auth/react";
 
 export type SignUpFormProps = {
   className?: string;
@@ -168,7 +169,9 @@ const SignUpForm = ({
 
   const onSignUpWithGoogleClick = async () => {
     try {
-      // await signIn("google", { callbackUrl: SIGN_UP_REDIRECT_PATH });
+      await signIn("google", {
+        callbackUrl: SIGN_UP_REDIRECT_PATH,
+      });
     } catch (err) {
       toast({
         title: "An unknown error occured",

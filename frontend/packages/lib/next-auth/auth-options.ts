@@ -6,6 +6,8 @@ import { type GoogleProfile } from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AppError, AppErrorCode } from "../errors/app-error";
 import { decryptSecondaryData } from "../server-only/crypto/decrypt";
+import { getAccountByProviderAndAccountId } from "../api/account/fetchers";
+
 import type { JWT } from "next-auth/jwt";
 
 import { env } from "next-runtime-env";
@@ -18,6 +20,12 @@ import {
 } from "../api/users/fetchers";
 import { User } from "../api/users/types";
 import { formatSecureCookieName, useSecureCookies } from "../constants/auth";
+import { AuthProviderOptions } from "../api/account/types";
+
+export const SUPPORTED_AUTH_PROVIDERS = {
+  GOOGLE: "google",
+  MANUAL: "manual",
+} as const;
 
 export const NEXT_AUTH_OPTIONS: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET ?? "secret",
@@ -123,7 +131,8 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
 
       if (
         trigger === "signIn" ||
-        (trigger === "signUp" && account?.provider === "google")
+        (trigger === "signUp" &&
+          account?.provider === SUPPORTED_AUTH_PROVIDERS.GOOGLE)
       ) {
         merged.emailVerified = user.emailVerified
           ? new Date(user.emailVerified).toISOString()
@@ -159,7 +168,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
       }
       return session;
     },
-    async signIn({ user }) {
+    async signIn({ user, account }) {
       if (env("NEXT_PRIVATE_OIDC_ALLOW_SIGNUP") === "true") {
         return true;
       }
@@ -171,6 +180,21 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
         });
 
         return !!userData;
+      }
+
+      if (
+        account?.provider &&
+        Object.values(SUPPORTED_AUTH_PROVIDERS).includes(
+          account?.provider as AuthProviderOptions
+        )
+      ) {
+        const retrievedAccount = getAccountByProviderAndAccountId({
+          provider: (account?.provider as AuthProviderOptions) ?? "manual",
+          provider_account_id: account?.providerAccountId || user.id,
+        });
+
+        if (!retrievedAccount) {
+        }
       }
 
       return true;

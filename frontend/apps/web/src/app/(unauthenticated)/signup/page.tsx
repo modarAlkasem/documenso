@@ -15,7 +15,7 @@ const SignUpPage = () => {
     <SignUpForm
       className="w-screen max-w-screen-lg px-4 md:px-16 lg:-my-16"
       isGoogleSSOEnabled={true}
-      isOIDCSSOEnabled={true}
+      isOIDCSSOEnabled={false}
     />
   );
 };

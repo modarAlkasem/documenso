@@ -5,7 +5,7 @@ import {
   NEXT_PUBLIC_SIGNUP_DISABLED,
 } from "@documenso/lib/constants/app";
 import { AppError, AppErrorCode } from "@documenso/lib/errors/app-error";
-import { createUser } from "@documenso/lib/server-only/user/create-user";
+import { createAccount } from "@documenso/lib/api/account/fetchers";
 import { jobsClient } from "@documenso/lib/jobs/client";
 
 export const authRouter = router({
@@ -22,7 +22,11 @@ export const authRouter = router({
           "Only subscribers can have username shorter than 6 characters.",
       });
     }
-    const user = await createUser({ name, email, password, url, signature });
+    const user = await createAccount({
+      provider: "manual",
+      type: "credentials",
+      user: { name, email, password, url, signature },
+    });
     await jobsClient.triggerJob({
       name: "send.signup.confirmation.email",
       payload: {

@@ -73,7 +73,9 @@ export default async function VerifyEmailPage({
             <XCircle className="h-10 w-10 text-destructive" strokeWidth={2} />
           </div>
           <div>
-            <h2 className="font-bold text-2xl md:text-4xl"></h2>
+            <h2 className="font-bold text-2xl md:text-4xl">
+              Your token has expired!
+            </h2>
             <p className="text-muted-foreground mt-4">
               It seems that the provided token has expired. We've just sent you
               another token, please check your email and try again.
