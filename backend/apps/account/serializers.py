@@ -1,3 +1,6 @@
+# Django Imports
+from django.contrib.auth.hashers import make_password
+
 # REST Framework Imports
 from rest_framework import serializers
 
@@ -32,11 +35,32 @@ class RetrieveAccountByProviderAndAccountIdSerializer(serializers.Serializer):
 class AccountModelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict) -> Account:
-        user_data = validated_data.pop("user")
-        user: User = User._default_manager.create(**user_data)
+        user_data: dict = validated_data.pop("user")
+        user = User.objects.filter(email=user_data.get("email")).first()
+
+        if user_data.get("password") and (
+            hashed_pass := make_password(validated_data.get("password"))
+        ):
+            user_data["password"] = hashed_pass
+
+        if not user:
+            user = User._default_manager.create(**user_data)
+
+        elif (
+            user
+            and validated_data.get("provider") == AccountProviderChoices.MANUAL.value
+        ):
+            for key, value in validated_data.items():
+                setattr(user, key, value)
+
+            user.save()
 
         validated_data["user"] = user
-        validated_data["provider_account_id"] = user.id
+        validated_data["provider_account_id"] = (
+            user.id
+            if validated_data["provider"] == AccountProviderChoices.MANUAL.value
+            else validated_data["provider_account_id"]
+        )
         model_class = self.Meta.model
         return model_class.objects.create(**validated_data)
 

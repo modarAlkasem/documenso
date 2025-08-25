@@ -12,6 +12,7 @@ import {
   updateUser,
   getUserByUniqueField,
 } from "@documenso/lib/api/users/fetchers";
+
 import { UserSecurityAuditLogType } from "@documenso/lib/constants/auth";
 
 const auth = async (req: NextRequest) => {
@@ -26,10 +27,10 @@ const auth = async (req: NextRequest) => {
     },
     events: {
       signIn: async ({ user: { id: userId } }) => {
-        const user = await getUser(userId);
+        const user = await getUser(userId as number);
 
         await createSecurityLog({
-          userId,
+          userId: userId as number,
           type: UserSecurityAuditLogType.SIGN_IN,
           ipAddress,
           userAgent,

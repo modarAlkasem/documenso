@@ -14,7 +14,7 @@ const Form = FormProvider;
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TName;
 };
@@ -26,7 +26,7 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
@@ -149,7 +149,7 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
-  const { i18n } = useLingui();
+  // const { i18n } = useLingui();
 
   const { error, formMessageId } = useFormField();
 
@@ -160,9 +160,9 @@ const FormMessage = React.forwardRef<
   }
 
   // Checks to see if there's a translation for the string, since we're passing IDs for Zod errors.
-  if (typeof body === "string" && i18n.t(body)) {
-    body = i18n.t(body);
-  }
+  // if (typeof body === "string" && i18n.t(body)) {
+  //   body = i18n.t(body);
+  // }
 
   return (
     <AnimatePresence>

@@ -68,11 +68,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { i18n, lang, locales } = await setupI18nSSR();
+  // const { i18n, lang, locales } = await setupI18nSSR();
 
   return (
     <html
-      lang={lang}
       className={cn(interFont.variable, caveatFont.variable)}
       suppressContentEditableWarning
     >
@@ -96,12 +95,12 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TRPCProvider>
             {" "}
-            <I18nClientProvider
+            {/* <I18nClientProvider
               initialMessages={i18n.messages}
               initialLocaleData={{ lang, locales }}
-            >
-              {children}
-            </I18nClientProvider>
+            > */}
+            {children}
+            {/* </I18nClientProvider> */}
           </TRPCProvider>
         </ThemeProvider>
         <Toaster />

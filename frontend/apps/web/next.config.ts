@@ -1,18 +1,20 @@
 import type { NextConfig } from "next";
-const path = require('path');
+const path = require("path");
 import { withAxiom } from "next-axiom";
 
-
-const ENV_FILES = [".env",".env.local",`.env.${process.env.NODE_ENV || "development"}`];
+const ENV_FILES = [
+  ".env",
+  ".env.local",
+  `.env.${process.env.NODE_ENV || "development"}`,
+];
 ENV_FILES.forEach((file) => {
-    require('dotenv').config({
-      path: path.join(__dirname, `../../${file}`),
-    });
+  require("dotenv").config({
+    path: path.join(__dirname, `../../${file}`),
   });
+});
 
-
-const config:NextConfig = {
-  experimental:{
+const config: NextConfig = {
+  experimental: {
     // swcPlugins:[["@lingui/swc-plugin",{}]],
     // turbo: {
     //   rules: {
@@ -23,20 +25,26 @@ const config:NextConfig = {
     //   }
     // }
   },
-webpack:(config,{isServer}) =>{
-  if(isServer)
-    config.resolve.alias.canvas = false;
+  // webpack:(config,{isServer}) =>{
+  //   if(isServer)
+  //     config.resolve.alias.canvas = false;
 
-  config.module.rules.push({
-    test:/\.po$/,
-    use:{
-      loader:"@lingui/loader"
-    }
-  });
-  return config;
- 
-}
+  //   config.module.rules.push({
+  //     test:/\.po$/,
+  //     use:{
+  //       loader:"@lingui/loader"
+  //     }
+  //   });
+  //   return config;
 
-}
+  // }
+  transpilePackages: [
+    "@documenso/lib",
+    "@documenso/ui",
+    "@documenso/trpc",
+    "@documenso/tailwind-config",
+    "@documenso/assets",
+  ],
+};
 
 export default withAxiom(config);

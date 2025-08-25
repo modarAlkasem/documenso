@@ -6,7 +6,10 @@ import { type GoogleProfile } from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AppError, AppErrorCode } from "../errors/app-error";
 import { decryptSecondaryData } from "../server-only/crypto/decrypt";
-import { getAccountByProviderAndAccountId } from "../api/account/fetchers";
+import {
+  createAccount,
+  getAccountByProviderAndAccountId,
+} from "../api/account/fetchers";
 
 import type { JWT } from "next-auth/jwt";
 
@@ -98,13 +101,13 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
         emailVerified: user?.emailVerified
           ? new Date(user?.emailVerified).toISOString()
           : null,
-      } satisfies JWT;
+      };
 
       if (!merged.email || typeof merged.emailVerified !== "string") {
         const userId = Number(merged.id ?? merged.sub);
         try {
           const retrieved = await getUser(userId);
-          merged.id = retrieved.id;
+          merged.id = retrieved.id as number;
           merged.email = retrieved.email;
           merged.name = retrieved.name;
           merged.emailVerified =
@@ -126,7 +129,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
 
         const user = await updateUser(updateUserOptions);
         merged.lastSignedIn = updateUserOptions.lastSignedIn.toISOString();
-        merged.emailVerified = user.email_verified.toISOString();
+        merged.emailVerified = user.email_verified?.toISOString() as string;
       }
 
       if (
@@ -146,8 +149,9 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
 
         await updateUser(updateUserOptions);
       }
+
       return {
-        id: merged.id,
+        id: merged.id as number,
         email: merged.email,
         name: merged.name,
         lastSignedIn: merged.lastSignedIn,
@@ -190,10 +194,28 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
       ) {
         const retrievedAccount = getAccountByProviderAndAccountId({
           provider: (account?.provider as AuthProviderOptions) ?? "manual",
-          provider_account_id: account?.providerAccountId || user.id,
+          provider_account_id:
+            account?.providerAccountId || (user.id as number),
         });
 
         if (!retrievedAccount) {
+          await createAccount({
+            provider: SUPPORTED_AUTH_PROVIDERS.GOOGLE,
+            provider_account_id: account.providerAccountId,
+            type: "oauth",
+            access_token: account.access_token,
+            refresh_token: account.refresh_token,
+            id_token: account.id_token,
+            scope: account.scope,
+            expires_at: account.expires_at
+              ? new Date(account.expires_at)
+              : null,
+            session_state: account.session_state,
+            user: {
+              name: user.name ?? "",
+              email: user.email ?? "",
+            },
+          });
         }
       }
 

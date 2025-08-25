@@ -22,7 +22,7 @@ export const authRouter = router({
           "Only subscribers can have username shorter than 6 characters.",
       });
     }
-    const user = await createAccount({
+    const account = await createAccount({
       provider: "manual",
       type: "credentials",
       user: { name, email, password, url, signature },
@@ -30,9 +30,9 @@ export const authRouter = router({
     await jobsClient.triggerJob({
       name: "send.signup.confirmation.email",
       payload: {
-        email: user.email,
+        email: account.user.email,
       },
     });
-    return user;
+    return account.user;
   }),
 });
