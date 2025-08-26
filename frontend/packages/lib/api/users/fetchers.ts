@@ -9,7 +9,7 @@ import type {
 } from "./types";
 
 export const getUser = async (userId: number): Promise<User> => {
-  const result = await fetch(`${API_BASE_URL}/users/${userId}/`);
+  const result = await fetch(`${API_BASE_URL()}/users/${userId}/`);
 
   if (!result.ok) throw new AppError(AppErrorCode.INVALID_REQUEST);
 
@@ -21,7 +21,7 @@ export const getUserWithVerificationToken = async (
   userId: number
 ): Promise<UserWithVerificationToken> => {
   const result = await fetch(
-    `${API_BASE_URL}/users/${userId}/with-recent-token/`,
+    `${API_BASE_URL()}/users/${userId}/with-recent-token/`,
     {
       headers: ACCEPT_JSON_HEADER,
     }
@@ -44,7 +44,7 @@ export const updateUser = async ({
   id,
   ...data
 }: UpdateUserPayload): Promise<User> => {
-  const result = await fetch(`${API_BASE_URL}/users/unauth/`, {
+  const result = await fetch(`${API_BASE_URL()}/users/unauth/`, {
     method: "PATCH",
     headers: JSON_HEADERS,
     body: JSON.stringify(data),
@@ -68,7 +68,7 @@ export const getUserByUniqueField = async ({
   value,
 }: GetUserByUniqueFieldPayload): Promise<User> => {
   const result = await fetch(
-    `${API_BASE_URL}/users/retrieve-by-email/?field=${field}&value=${value}`,
+    `${API_BASE_URL()}/users/retrieve-by-email/?field=${field}&value=${value}`,
     {
       headers: ACCEPT_JSON_HEADER,
     }

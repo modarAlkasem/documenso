@@ -14,13 +14,12 @@ from ..serializers import (
 class AccountService:
 
     def create(self, req: Request) -> Response:
-        data = req.data
+        data = req.data.get("json")
         serializer = AccountWithRelatedUserModelSerializer(data=data)
 
         if serializer.is_valid(raise_exception=True):
-            account = AccountWithRelatedUserModelSerializer(
-                data=serializer.validated_data
-            ).save()
+
+            account = serializer.save()
 
             response_data = AccountWithRelatedUserModelSerializer(instance=account).data
             return Response(data=response_data, status=status.HTTP_201_CREATED)

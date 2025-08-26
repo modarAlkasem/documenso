@@ -34,6 +34,14 @@ class RetrieveAccountByProviderAndAccountIdSerializer(serializers.Serializer):
 
 class AccountModelSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Account
+        fields = "__all__"
+
+
+class AccountWithRelatedUserModelSerializer(AccountModelSerializer):
+    user = UserModelSerializer()
+
     def create(self, validated_data: dict) -> Account:
         user_data: dict = validated_data.pop("user")
         user = User.objects.filter(email=user_data.get("email")).first()
@@ -64,13 +72,5 @@ class AccountModelSerializer(serializers.ModelSerializer):
         model_class = self.Meta.model
         return model_class.objects.create(**validated_data)
 
-    class Meta:
-        model = Account
-        fields = "__all__"
-
-
-class AccountWithRelatedUserModelSerializer(AccountModelSerializer):
-    user = UserModelSerializer()
-
-    class Meta(AccountModelSerializer):
+    class Meta(AccountModelSerializer.Meta):
         pass

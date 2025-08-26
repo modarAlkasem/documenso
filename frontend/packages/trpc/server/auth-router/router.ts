@@ -25,6 +25,7 @@ export const authRouter = router({
     const account = await createAccount({
       provider: "manual",
       type: "credentials",
+      provider_account_id: "",
       user: { name, email, password, url, signature },
     });
     await jobsClient.triggerJob({

@@ -51,9 +51,8 @@ class User(TimeStampedModel):
         help_text="User's password",
     )
     source = models.CharField(_("source"), max_length=150, blank=True, null=True)
-    signature = models.CharField(
+    signature = models.TextField(
         _("signature"),
-        max_length=250,
         blank=True,
         null=True,
         help_text="User's signature",

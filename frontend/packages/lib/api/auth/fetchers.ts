@@ -14,7 +14,7 @@ import type { User } from "../users/types";
 import { AppError, AppErrorCode } from "../../errors/app-error";
 
 export const signUp = async (payload: SignupPayload): Promise<User> => {
-  const result = await fetch(`${API_BASE_URL}/auth/signup/`, {
+  const result = await fetch(`${API_BASE_URL()}/auth/signup/`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify(payload),
@@ -29,7 +29,7 @@ export const signUp = async (payload: SignupPayload): Promise<User> => {
 export const createVerificationToken = async (
   payload: CreateVerificationTokenPayload
 ): Promise<VerificationToken> => {
-  const result = await fetch(`${API_BASE_URL}/auth/verification-tokens/`, {
+  const result = await fetch(`${API_BASE_URL()}/auth/verification-tokens/`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify(payload),
@@ -56,7 +56,7 @@ export const verifyToken = async ({
   identifier,
 }: VerifyTokenPayload): Promise<VerifyTokenResponse> => {
   const result = await fetch(
-    `${API_BASE_URL}/auth/verification-tokens/verify/`,
+    `${API_BASE_URL()}/auth/verification-tokens/verify/`,
     {
       method: "POST",
       headers: JSON_HEADERS,
@@ -75,7 +75,7 @@ export const getVerificationTokenWithUser = async (
   token: string
 ): Promise<GetVerificationTokenWithUserResponse> => {
   const result = await fetch(
-    `${API_BASE_URL}/auth/verification-tokens/retrieve-by-token/?token=${token}`,
+    `${API_BASE_URL()}/auth/verification-tokens/retrieve-by-token/?token=${token}`,
     {
       headers: ACCEPT_JSON_HEADER,
     }
@@ -100,7 +100,7 @@ export const createSecurityLog = async ({
   ipAddress,
   userAgent,
 }: createSecurityLogPayload): Promise<void> => {
-  const result = await fetch(`${API_BASE_URL}/auth/security-logs/`, {
+  const result = await fetch(`${API_BASE_URL()}/auth/security-logs/`, {
     method: "POST",
     headers: JSON_HEADERS,
     body: JSON.stringify({ userId, type, ipAddress, userAgent }),

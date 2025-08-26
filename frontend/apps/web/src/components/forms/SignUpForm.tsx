@@ -97,7 +97,7 @@ const SignUpForm = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [step, setStep] = useState<SignUpStepsType>("BASIC_DETAILS");
-  const utmSrc = searchParams.get("utm_source");
+  const utmSrc = searchParams?.get("utm_source");
   const baseUrl = new URL(NEXT_PUBLIC_WEBAPP_URL() ?? "http://localhost:3000");
   const { toast } = useToast();
   const form = useForm<TSignUpFormSchema>({
@@ -158,12 +158,7 @@ const SignUpForm = ({
       "password",
       "signature",
     ]);
-    toast({
-      title: "Registeration Successful",
-      description:
-        "You have successfully registered. please verify your account by clicking on the link you received in your email.  ",
-      duration: 5000,
-    });
+
     if (isValid) setStep("CLAIM_USERNAME");
   };
 
