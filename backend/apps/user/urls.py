@@ -6,6 +6,6 @@ from user.views import UserViewSet, UnauthUserViewSet
 
 router = DefaultRouter()
 router.register(r"", UserViewSet, basename="user")
-router.register(r"unauth/", UnauthUserViewSet, basename="unauth-user")
+router.register(r"unauth", UnauthUserViewSet, basename="unauth-user")
 
 urlpatterns = router.urls

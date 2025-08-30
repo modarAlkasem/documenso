@@ -100,6 +100,7 @@ export default async function VerifyEmailPage({
       return <VerifyEmailClientPage signInData={data} />;
     })
     .with(EMAIL_VERIFICATION_STATE.ALREADY_VERIFIED, () => {
-      <VerifyEmailClientPage />;
-    });
+      return <VerifyEmailClientPage />;
+    })
+    .exhaustive();
 }

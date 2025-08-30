@@ -25,7 +25,7 @@ export const sendConfirmationEmail = async ({
   }
 
   const assetBaseUrl = NEXT_PUBLIC_WEBAPP_URL() ?? "http://localhost:3000";
-  const confirmationLink = `${assetBaseUrl}/verify-email/${user.verification_token}`;
+  const confirmationLink = `${assetBaseUrl}/verify-email/${user.verification_token.token}`;
   const confirmationTemplate = createElement(ConfirmEmail, {
     assetBaseUrl,
     confirmationLink,

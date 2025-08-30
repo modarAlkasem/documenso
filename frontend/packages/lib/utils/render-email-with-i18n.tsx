@@ -1,4 +1,6 @@
-import { render, type RenderOptions } from "@documenso/email/render";
+// import { render, type RenderOptions } from "@documenso/email/render";
+import { render } from "@documenso/email/render";
+import { Options as RenderOptions } from "@react-email/render";
 import type { SupportedLanguageCodes } from "../constants/i18n";
 
 export const renderEmailWithI18N = async (

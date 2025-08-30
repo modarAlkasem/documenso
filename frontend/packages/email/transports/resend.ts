@@ -4,23 +4,23 @@ import type MailMessage from "nodemailer/lib/mailer/mail-message";
 import { Resend } from "resend";
 import { NEXT_PRIVATE_RESEND_API_KEY } from "@documenso/lib/constants/app";
 
-export declare const RESEND_ERROR_CODES_BY_KEY: {
-  readonly missing_required_field: 422;
-  readonly invalid_access: 422;
-  readonly invalid_parameter: 422;
-  readonly invalid_region: 422;
-  readonly rate_limit_exceeded: 429;
-  readonly missing_api_key: 401;
-  readonly invalid_api_Key: 403;
-  readonly invalid_from_address: 403;
-  readonly validation_error: 403;
-  readonly invalid_idempotency_key: 403;
-  readonly invalid_idempotent_request: 403;
-  readonly concurrent_idempotent_requests: 403;
-  readonly not_found: 404;
-  readonly method_not_allowed: 405;
-  readonly application_error: 500;
-  readonly internal_server_error: 500;
+export const RESEND_ERROR_CODES_BY_KEY = {
+  missing_required_field: 422,
+  invalid_access: 422,
+  invalid_parameter: 422,
+  invalid_region: 422,
+  rate_limit_exceeded: 429,
+  missing_api_key: 401,
+  invalid_api_Key: 403,
+  invalid_from_address: 403,
+  validation_error: 403,
+  invalid_idempotency_key: 403,
+  invalid_idempotent_request: 403,
+  concurrent_idempotent_requests: 403,
+  not_found: 404,
+  method_not_allowed: 405,
+  application_error: 500,
+  internal_server_error: 500,
 };
 
 type ResendTransportOptions = {

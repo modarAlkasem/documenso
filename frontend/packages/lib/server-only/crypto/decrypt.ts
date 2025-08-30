@@ -25,7 +25,7 @@ export const decryptSecondaryData = (encryptedData: string) => {
     )
       return null;
 
-    return result.data.data;
+    return result.data;
   } catch {
     return null;
   }

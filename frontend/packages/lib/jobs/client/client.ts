@@ -20,7 +20,12 @@ export class JobClient<T extends ReadonlyArray<JobDefinition>> {
   public async triggerJob(options: TriggerJobOptions<T>) {
     return this._provider.triggerJob(options);
   }
+
   public getApiHandler() {
     return this._provider.getApiHandler();
+  }
+
+  public getRouteApiHandler() {
+    return this._provider.getApiRouteHandlerMethods();
   }
 }

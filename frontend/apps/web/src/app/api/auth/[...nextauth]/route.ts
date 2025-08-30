@@ -1,4 +1,4 @@
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
 import NextAuth from "next-auth";
 
@@ -15,10 +15,9 @@ import {
 
 import { UserSecurityAuditLogType } from "@documenso/lib/constants/auth";
 
-const auth = async (req: NextRequest) => {
+const auth = async (req: any, ctx: any) => {
   const { ipAddress, userAgent } = extractNextRequestMetadata(req);
-
-  return await NextAuth({
+  return await NextAuth(req, ctx, {
     ...NEXT_AUTH_OPTIONS,
     pages: {
       signIn: "/signin",

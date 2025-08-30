@@ -10,16 +10,18 @@ user_queryset = User.objects.all()
 
 
 class CheckUserUniqueFieldValueParamSerializer(serializers.Serializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=user_queryset)
+    id = serializers.PrimaryKeyRelatedField(queryset=user_queryset, required=False)
     email = serializers.SlugRelatedField(
         queryset=user_queryset,
         slug_field="email",
         error_messages={"does_not_exist": "Invalid email"},
+        required=False,
     )
     url = serializers.SlugRelatedField(
         queryset=user_queryset,
         slug_field="url",
         error_messages={"does_not_exist": "Invalid url"},
+        required=False,
     )
 
 

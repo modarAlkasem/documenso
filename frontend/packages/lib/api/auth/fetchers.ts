@@ -48,7 +48,7 @@ export const createVerificationToken = async (
     }
   }
 
-  return json.data.data;
+  return json.data;
 };
 
 export const verifyToken = async ({
@@ -68,7 +68,7 @@ export const verifyToken = async ({
       "Something went wrong while verifying your email.Please try again."
     );
   const json = await result.json();
-  return json.data.data;
+  return json.data;
 };
 
 export const getVerificationTokenWithUser = async (
@@ -91,7 +91,7 @@ export const getVerificationTokenWithUser = async (
   }
 
   const json = await result.json();
-  return json.data.data;
+  return json.data;
 };
 
 export const createSecurityLog = async ({

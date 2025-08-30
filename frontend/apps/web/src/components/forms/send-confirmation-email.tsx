@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@documenso/ui/primitives/form/form";
 import { Input } from "@documenso/ui/primitives/input";
-import { toast, useToast } from "@documenso/ui/primitives/use-toaste";
+import { toast } from "@documenso/ui/primitives/use-toaste";
 
 export const ZSendConfirmationEmailFormSchema = z.object({
   email: z.string().email(),
@@ -82,7 +82,6 @@ export const SendConfirmationEmailForm = ({
               <FormItem>
                 <FormLabel> Email Address</FormLabel>
                 <FormControl>
-                  {" "}
                   <Input type="email" {...field} />
                 </FormControl>
               </FormItem>

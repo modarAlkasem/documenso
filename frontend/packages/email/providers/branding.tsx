@@ -14,7 +14,7 @@ const BrandingContext = createContext<BrandingContextValue | undefined>(
   undefined
 );
 
-const defaultBrandingContextValue: BrandingContextValue = {
+export const defaultBrandingContextValue: BrandingContextValue = {
   brandingEnabled: false,
   brandingUrl: "",
   brandingLogo: "",
@@ -27,9 +27,11 @@ export const BrandingProvider = (props: {
   branding?: BrandingContextValue | undefined;
 }) => {
   return (
-    <BrandingContext value={props.branding ?? defaultBrandingContextValue}>
+    <BrandingContext.Provider
+      value={props.branding ?? defaultBrandingContextValue}
+    >
       {props.children}
-    </BrandingContext>
+    </BrandingContext.Provider>
   );
 };
 

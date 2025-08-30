@@ -55,12 +55,14 @@ class UserService:
         value_query_param = query_params.get("value")
 
         if not field_query_param and field_query_param not in UserUniqueFieldChoices:
+
             return Response(
                 data={"field": "'field' query param is invalid or not provided"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if not value_query_param:
+
             return Response(
                 data={"value": "'value' query param is invalid or not provided"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -86,7 +88,8 @@ class UserService:
             if serializer.is_valid(raise_exception=True) and (
                 old_user := User.objects.get(id=pk)
             ):
-                user = UserModelSerializer(data=data, instance=old_user).save()
+                serializer.instance = old_user
+                user = serializer.save()
                 response = {
                     "data": UserModelSerializer(instance=user).data,
                     "status": status.HTTP_200_OK,

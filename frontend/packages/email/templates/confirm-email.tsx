@@ -7,7 +7,8 @@ import {
   Preview,
   Img,
 } from "../components";
-import { useBranding } from "../providers/branding";
+// import { useBranding } from "../providers/branding";
+import { defaultBrandingContextValue } from "../providers/branding";
 import type { TemplateConfirmationEmailProps } from "../template-components/template-confirmation-email";
 import { TemplateConfirmationEmail } from "../template-components/template-confirmation-email";
 import { TemplateFooter } from "../template-components/template-footer";
@@ -16,8 +17,10 @@ export const ConfirmEmail = ({
   confirmationLink,
   assetBaseUrl = "http://localhost:3002",
 }: TemplateConfirmationEmailProps) => {
-  const branding = useBranding();
-  const assetUrl = new URL("/static/logo.png", assetBaseUrl).toString();
+  // const branding = useBranding();
+  const branding = defaultBrandingContextValue;
+  const logoUrl = new URL("/static/logo.png", assetBaseUrl).toString();
+
 
   return (
     <Html>
@@ -35,7 +38,7 @@ export const ConfirmEmail = ({
                 />
               ) : (
                 <Img
-                  src={assetBaseUrl}
+                  src={logoUrl}
                   alt="Documenso Logo"
                   className="mb-4 h-6"
                 />

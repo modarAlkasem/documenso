@@ -39,8 +39,16 @@ class AccountModelSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class UserWithoutUniqueEmailModelSerializer(UserModelSerializer):
+
+    email = serializers.EmailField(required=False)
+
+    class Meta(UserModelSerializer.Meta):
+        pass
+
+
 class AccountWithRelatedUserModelSerializer(AccountModelSerializer):
-    user = UserModelSerializer()
+    user = UserWithoutUniqueEmailModelSerializer()
 
     def create(self, validated_data: dict) -> Account:
         user_data: dict = validated_data.pop("user")

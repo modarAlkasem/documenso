@@ -15,6 +15,7 @@ class AccountService:
 
     def create(self, req: Request) -> Response:
         data = req.data.get("json")
+
         serializer = AccountWithRelatedUserModelSerializer(data=data)
 
         if serializer.is_valid(raise_exception=True):
@@ -25,7 +26,7 @@ class AccountService:
             return Response(data=response_data, status=status.HTTP_201_CREATED)
 
     def retrieve_by_provider_and_account_id(self, req: Request) -> Response:
-        query_params = req.query_params.get()
+        query_params = req.query_params
         serializer = RetrieveAccountByProviderAndAccountIdSerializer(data=query_params)
 
         if serializer.is_valid(raise_exception=True):

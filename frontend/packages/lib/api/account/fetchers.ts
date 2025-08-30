@@ -14,7 +14,7 @@ export const getAccountByProviderAndAccountId = async ({
   provider,
 }: GetAccountByProviderAndAccountIdPayload): Promise<GetAccountByProviderAndAccountIdResponse> => {
   const result = await fetch(
-    `${API_BASE_URL()}/account/retrieve-by-provider-and-account-id/?provider=${provider}&provider_account_id=${provider_account_id}`,
+    `${API_BASE_URL()}/accounts/retrieve-by-provider-and-account-id/?provider=${provider}&provider_account_id=${provider_account_id}`,
     {
       headers: ACCEPT_JSON_HEADER,
     }
@@ -30,13 +30,12 @@ export const getAccountByProviderAndAccountId = async ({
   }
 
   const json = await result.json();
-  return json.data.data;
+  return json.data;
 };
 
 export const createAccount = async (
   account: AccountWithUser
 ): Promise<AccountWithUser> => {
-  console.log(`${API_BASE_URL()}/accounts/`);
   const result = await fetch(`${API_BASE_URL()}/accounts/`, {
     method: "POST",
     headers: JSON_HEADERS,

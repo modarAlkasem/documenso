@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 import type { Context, Handler, InngestFunction } from "inngest";
 import { Inngest as InngestClient } from "inngest";
 import type { Logger } from "inngest/middleware/logger";
-import { serve as createPagesRoute } from "inngest/next";
+import { serve } from "inngest/next";
 import { json } from "micro";
 import type {
   JobDefinition,
@@ -71,7 +71,7 @@ export class InngestJobProvider extends BaseJobProvider {
   }
 
   public getApiHandler() {
-    const handler = createPagesRoute({
+    const handler = serve({
       client: this._client,
       functions: this._functions,
     });
@@ -90,6 +90,15 @@ export class InngestJobProvider extends BaseJobProvider {
       return await handler(nextReq, res);
     };
   }
+
+  public getApiRouteHandlerMethods() {
+    const handler = serve({
+      client: this._client,
+      functions: this._functions,
+    });
+    return handler;
+  }
+
   private convertInngestJobIoToJobRunIo(ctx: Context.Any & { logger: Logger }) {
     const { step } = ctx;
 

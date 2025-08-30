@@ -59,7 +59,7 @@ const getTransport = (): Transporter => {
   }
 
   return createTransport({
-    url: NEXT_PRIVATE_SMTP_HOST(),
+    host: NEXT_PRIVATE_SMTP_HOST(),
     port: Number(NEXT_PRIVATE_SMTP_PORT()) || 587,
     secure: NEXT_PRIVATE_SMTP_SECURE() === "true",
     ignoreTLS: NEXT_PRIVATE_SMTP_UNSAFE_IGNORE_TLS() === "true",

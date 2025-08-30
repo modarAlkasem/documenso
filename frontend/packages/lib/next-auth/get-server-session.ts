@@ -10,7 +10,7 @@ import { getUserByUniqueField } from "../api/users/fetchers";
 export const getServerComponentSession = cache(async () => {
   const session = await getNextAuthServerSession(NEXT_AUTH_OPTIONS);
 
-  if (!session || session.user.email) {
+  if (!session || !session.user.email) {
     return { user: null, session: null };
   }
 

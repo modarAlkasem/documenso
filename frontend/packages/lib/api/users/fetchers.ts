@@ -37,14 +37,15 @@ export const getUserWithVerificationToken = async (
   }
 
   const json = await result.json();
-  return json.data.data;
+
+  return json.data;
 };
 
 export const updateUser = async ({
   id,
   ...data
 }: UpdateUserPayload): Promise<User> => {
-  const result = await fetch(`${API_BASE_URL()}/users/unauth/`, {
+  const result = await fetch(`${API_BASE_URL()}/users/unauth/${id}/`, {
     method: "PATCH",
     headers: JSON_HEADERS,
     body: JSON.stringify(data),
@@ -60,7 +61,7 @@ export const updateUser = async ({
       throw new AppError(AppErrorCode.UNKNOWN_ERROR);
   }
 
-  return json.data.data;
+  return json.data;
 };
 
 export const getUserByUniqueField = async ({
@@ -68,7 +69,7 @@ export const getUserByUniqueField = async ({
   value,
 }: GetUserByUniqueFieldPayload): Promise<User> => {
   const result = await fetch(
-    `${API_BASE_URL()}/users/retrieve-by-email/?field=${field}&value=${value}`,
+    `${API_BASE_URL()}/users/retrieve-by-unique-field/?field=${field}&value=${value}`,
     {
       headers: ACCEPT_JSON_HEADER,
     }
@@ -87,5 +88,5 @@ export const getUserByUniqueField = async ({
   }
 
   const json = await result.json();
-  return json.data.data;
+  return json.data;
 };

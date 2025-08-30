@@ -1,4 +1,4 @@
-import { createPagesRoute } from "@trigger.dev/nextjs";
+import { createPagesRoute, createAppRoute } from "@trigger.dev/nextjs";
 import type { IO } from "@trigger.dev/sdk";
 import { TriggerClient, eventTrigger } from "@trigger.dev/sdk";
 
@@ -57,6 +57,12 @@ export class TriggerJobProvider extends BaseJobProvider {
     const { handler } = createPagesRoute(this._client);
 
     return handler;
+  }
+
+  public getApiRouteHandlerMethods() {
+    const { POST } = createAppRoute(this._client);
+
+    return POST;
   }
 
   private convertTriggerIoToJobRunIo(io: IO) {

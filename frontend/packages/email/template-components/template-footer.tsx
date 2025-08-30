@@ -1,12 +1,14 @@
 import { Link, Section, Text } from "../components";
-import { useBranding } from "../providers/branding";
+// import { useBranding } from "../providers/branding";
+import { defaultBrandingContextValue } from "../providers/branding";
 
 export type TemplateFooterProps = {
   isDocument?: boolean;
 };
 
 export const TemplateFooter = ({ isDocument = true }: TemplateFooterProps) => {
-  const branding = useBranding();
+  // const branding = useBranding();
+  const branding = defaultBrandingContextValue;
 
   return (
     <Section>

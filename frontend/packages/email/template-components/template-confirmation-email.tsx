@@ -12,7 +12,7 @@ export const TemplateConfirmationEmail = ({
 }: TemplateConfirmationEmailProps) => {
   return (
     <>
-      <TemplateDocumentImage />
+      <TemplateDocumentImage className="mt-6" assetBaseUrl={assetBaseUrl} />
       <Section className="flex-row items-center justify-center">
         <Text className="text-primary mx-auto mb-0 max-w-[80%] text-center font-semibold text-lg">
           {" "}

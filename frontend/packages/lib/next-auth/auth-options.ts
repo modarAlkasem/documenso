@@ -37,11 +37,22 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
   },
   providers: [
     GoogleProvider<GoogleProfile>({
-      clientId: env("GOOGLE_CLIENT_ID") ?? "",
-      clientSecret: env("GOOGLE_SECRET_KEY") ?? "",
-      profile(profile) {
+      clientId: env("NEXT_PRIVATE_GOOGLE_CLIENT_ID") ?? "",
+      clientSecret: env("NEXT_PRIVATE_GOOGLE_SECRET_KEY") ?? "",
+      async profile(profile) {
+        const user = await getUserByUniqueField({
+          field: "email",
+          value: profile.email,
+        });
+
+        let id = null;
+        if (user && user.id !== Number(profile.sub)) {
+          id = user.id as number;
+        } else {
+          id = Number(profile.sub);
+        }
         return {
-          id: Number(profile.sub),
+          id: id,
           name:
             profile.name ||
             `${profile.given_name} ${profile.family_name}`.trim(),
@@ -70,7 +81,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
         if (!decryptedCredential)
           throw new AppError(AppErrorCode.INVALID_REQUEST);
 
-        const parsedCredential = JSON.parse(decryptedCredential);
+        const parsedCredential = JSON.parse(decryptedCredential.data);
 
         if (typeof parsedCredential !== "object" || parsedCredential === null)
           throw new AppError(AppErrorCode.INVALID_REQUEST);
@@ -128,8 +139,9 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
         };
 
         const user = await updateUser(updateUserOptions);
+
         merged.lastSignedIn = updateUserOptions.lastSignedIn.toISOString();
-        merged.emailVerified = user.email_verified?.toISOString() as string;
+        merged.emailVerified = user.email_verified as unknown as string;
       }
 
       if (
@@ -173,8 +185,9 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
       return session;
     },
     async signIn({ user, account }) {
-      if (env("NEXT_PRIVATE_OIDC_ALLOW_SIGNUP") === "true") {
-        return true;
+      let result = true;
+      if (env("NEXT_PRIVATE_OIDC_ALLOW_SIGNUP") === "false") {
+        result = false;
       }
 
       if (env("NEXT_PUBLIC_DISABLE_SIGNUP") === "true") {
@@ -183,22 +196,23 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
           value: user.email!,
         });
 
-        return !!userData;
+        result = !!userData;
       }
 
       if (
         account?.provider &&
         Object.values(SUPPORTED_AUTH_PROVIDERS).includes(
           account?.provider as AuthProviderOptions
-        )
+        ) &&
+        result
       ) {
-        const retrievedAccount = getAccountByProviderAndAccountId({
+        const retrievedAccount = await getAccountByProviderAndAccountId({
           provider: (account?.provider as AuthProviderOptions) ?? "manual",
           provider_account_id:
             account?.providerAccountId || (user.id as number),
         });
 
-        if (!retrievedAccount) {
+        if (!retrievedAccount && result) {
           await createAccount({
             provider: SUPPORTED_AUTH_PROVIDERS.GOOGLE,
             provider_account_id: account.providerAccountId,
@@ -219,7 +233,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
         }
       }
 
-      return true;
+      return result;
     },
   },
   cookies: {

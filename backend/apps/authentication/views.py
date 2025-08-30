@@ -22,12 +22,15 @@ class VerificationTokenViewSet(ViewSet):
     def create(self, request: Request) -> Response:
         return self.service.create(request)
 
-    @action(methods=["POST"], detail=False)
+    @action(
+        methods=["POST"],
+        detail=False,
+    )
     def verify(self, request: Request) -> Response:
         return self.service.verify(request)
 
     @action(methods=["GET"], detail=False, url_path="retrieve-by-token")
-    def verify(self, request: Request) -> Response:
+    def retrieve_by_token(self, request: Request) -> Response:
         return self.service.retrieve_by_token(request)
 
 

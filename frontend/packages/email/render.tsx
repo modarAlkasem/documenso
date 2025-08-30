@@ -1,40 +1,44 @@
 import * as ReactEmail from "@react-email/render";
 import config from "@documenso/tailwind-config";
 import { Tailwind } from "./components";
-import { BrandingProvider, type BrandingSettings } from "./providers/branding";
+// import { BrandingProvider, type BrandingSettings } from "./providers/branding";
 
-export type RenderOptions = ReactEmail.Options & {
-  branding?: BrandingSettings;
-};
+// export type RenderOptions = ReactEmail.Options & {
+//   branding?: BrandingSettings;
+// };
 
 export const render = (
   element: React.ReactElement,
-  options?: RenderOptions
+  // options?: RenderOptions,
+  options?: ReactEmail.Options
 ) => {
-  const { branding, ...otherOptions } = options ?? {};
+  // const { branding, ...otherOptions } = options ?? {};
   return ReactEmail.render(
     <Tailwind
       config={{
         theme: {
           extend: {
-            colors: config.theme?.colors,
+            colors: config.theme?.extend?.colors,
           },
         },
       }}
     >
-      <BrandingProvider branding={branding}>{element}</BrandingProvider>
+      {element}
+      {/* <BrandingProvider branding={branding}>{element}</BrandingProvider> */}
     </Tailwind>,
-    otherOptions
+    // otherOptions,
+    options
   );
 };
 
 export const renderAsync = async (
   element: React.ReactNode,
-  options?: ReactEmail.Options & {
-    branding?: BrandingSettings;
-  }
+  // options?: ReactEmail.Options & {
+  //   branding?: BrandingSettings;
+  // }
+  options?: ReactEmail.Options
 ) => {
-  const { branding, ...otherOptions } = options ?? {};
+  // const { branding, ...otherOptions } = options ?? {};
   return await ReactEmail.render(
     <Tailwind
       config={{
@@ -45,8 +49,10 @@ export const renderAsync = async (
         },
       }}
     >
-      <BrandingProvider branding={branding}>{element}</BrandingProvider>
+      {element}
+      {/* <BrandingProvider branding={branding}>{element}</BrandingProvider> */}
     </Tailwind>,
-    otherOptions
+    // otherOptions
+    options
   );
 };

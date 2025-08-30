@@ -21,13 +21,13 @@ class UserViewSet(ViewSet):
     def retrieve_with_recent_token(self, request: Request, pk: UUID) -> Response:
         return self.service.retrieve_with_recent_token(request, pk)
 
+    @action(detail=False, url_path="retrieve-by-unique-field")
+    def retrieve_by_unique_field(self, request: Request) -> Response:
+        return self.service.retrieve_by_unique_field(request)
+
 
 class UnauthUserViewSet(ViewSet):
     service = UserService()
 
     def partial_update(self, request: Request, pk: int) -> Response:
         return self.service.unauth_partial_update(request, pk)
-
-    @action(detail=False, url_path="retrieve")
-    def retrieve_by_unique_field(self, request: Request) -> Response:
-        return self.service.retrieve_by_unique_field(request)

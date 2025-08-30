@@ -46,7 +46,7 @@ class CreateVerificationTokenSerializer(serializers.Serializer):
     force = serializers.BooleanField(default=False)
     email = serializers.EmailField(validators=[EmailExistsValidator()])
     identifier = serializers.ChoiceField(choices=TokenIdentifierChoices.choices)
-    expires = serializers.DateTimeField()
+    expires_at = serializers.DateTimeField()
 
     def to_internal_value(self, data):
         if "email" in data:

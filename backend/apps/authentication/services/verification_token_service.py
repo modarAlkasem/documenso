@@ -30,18 +30,20 @@ from ..constants import EmailVerificationTokenStatusChoices, TokenIdentifierChoi
 class VerificationTokenService:
 
     def create(self, request: Request):
-        data = request.data
+        data = request.data.get("json")
         serializer = CreateVerificationTokenSerializer(data=data)
+
         if serializer.is_valid(raise_exception=True):
             verification_token = None
             email, identifier, expires, force = map(
                 serializer.validated_data.get,
-                ("email", "identifier", "expires", "force"),
+                ("email", "identifier", "expires_at", "force"),
             )
             user: User = User.objects.get(email=email)
             if user.email_verified:
                 return Response(
-                    data="Email is already verified", status=status.HTTP_400_BAD_REQUEST
+                    data="Email is already verified",
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
             recent_token: VerificationToken = user.verification_tokens.first()
 
@@ -69,7 +71,7 @@ class VerificationTokenService:
             return Response(data=response_data, status=status.HTTP_201_CREATED)
 
     def verify(self, request: Request) -> Response:
-        data = request.data
+        data = request.data.get("json")
         serializer = VerifyTokenRequestSerializer(data=data)
 
         if not serializer.is_valid() and isinstance(serializer.errors, ReturnDict):
@@ -136,7 +138,7 @@ class VerificationTokenService:
         )
 
     def retrieve_by_token(self, request: Request) -> Response:
-        query_params = request.query_params.get()
+        query_params = request.query_params
         serializer = RetrieveVerificationTokenByTokenSerializer(data=query_params)
 
         if serializer.is_valid(raise_exception=True):
