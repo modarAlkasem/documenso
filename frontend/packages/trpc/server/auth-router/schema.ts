@@ -36,3 +36,10 @@ export const ZSignUpMutationSchema = z.object({
     })
     .optional(),
 });
+
+export const ZCurrentPasswordSchema = z
+  .string()
+  .min(6, { message: "Must be at least 6 characters in length." })
+  .max(72, {
+    message: "Must be maximum 72 characters in length.",
+  });
