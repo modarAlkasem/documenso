@@ -19,3 +19,21 @@ import { trpc } from "@documenso/trpc/react";
 import { ZCurrentPasswordSchema } from "@documenso/trpc/server/auth-router/schema";
 import { cn } from "@documenso/ui/lib/utils";
 import { Button } from "@documenso/ui/primitives/button";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogTitle,
+  DialogFooter,
+} from "@documenso/ui/primitives/dialog";
+import {
+  Form,
+  FormField,
+  FormControl,
+  FormLabel,
+  FormItem,
+  FormMessage,
+} from "@documenso/ui/primitives/form/form";
+import { Input } from "@documenso/ui/primitives/input";
+import { PasswordInput } from "@documenso/ui/primitives/password-input";
+import { toast } from "@documenso/ui/primitives/use-toaste";
