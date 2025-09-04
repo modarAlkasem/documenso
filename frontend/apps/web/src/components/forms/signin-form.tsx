@@ -114,11 +114,74 @@ export const SignInForm = ({
 
   const isSubmitting = form.formState.isSubmitting;
 
+  const onFormSubmit = async ({
+    email,
+    password,
+    totpCode,
+    backupCode,
+  }: TSignInFormSchema) => {
+    const credentials: Record<string, string> = {
+      email,
+      password,
+    };
+
+    if (totpCode) {
+      credentials.totpCode = totpCode;
+    }
+
+    if (backupCode) {
+      credentials.backupCode = backupCode;
+    }
+    try {
+      const result = await signIn("credentials", {
+        ...credentials,
+        callbackUrl,
+        redirect: false,
+      });
+
+      if (result?.error && isErrorCode(result.error)) {
+        if (result.error === TwoFactorEnabledErrorCode) {
+        }
+
+        const errorMessage = ErrorCode[result.error];
+
+        if (result.error === ErrorCode.UNVERIFIED_EMAIL) {
+          router.push("/unverified-email");
+
+          toast({
+            title: "Unable to sign in",
+            description: errorMessage,
+          });
+          return;
+        }
+
+        toast({
+          title: "Unable to sign in",
+          description: errorMessage,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!result?.url) {
+        throw new Error("An unknown error occured");
+      }
+      router.push(result.url);
+    } catch (err) {
+      toast({
+        title: "An unknown error occured",
+        description:
+          "We encountered an error while trying to sign you in, please try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Form {...form}>
       <form
         className={cn("flex flex-col gap-y-4 w-full", className)}
-        onSubmit={() => console.log("Form has been submitted!")}
+        onSubmit={form.handleSubmit(onFormSubmit)}
       >
         <fieldset
           className="flex flex-col gap-y-4 w-full"
