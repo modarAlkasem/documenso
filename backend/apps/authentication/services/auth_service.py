@@ -52,12 +52,12 @@ class AuthService:
             return Response(data=res_data, status=status.HTTP_201_CREATED)
 
     def sign_in(self, req: Request) -> Response:
-        data = req.data
+        data = req.data.get("json")
         serializer = SignInSerializer(data=data)
 
         if serializer.is_valid(raise_exception=True):
             if serializer.deep_error_exists:
-                print(serializer.deep_error_code)
+
                 return Response(
                     status_text=serializer.deep_error_code,
                     status=status.HTTP_400_BAD_REQUEST,
