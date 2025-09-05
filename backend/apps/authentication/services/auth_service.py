@@ -4,15 +4,19 @@ from django.db import DatabaseError
 
 # REST Framework Imports
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.request import Request
 
 # Project Imports
 from team.models import TeamMemberInvite, TeamMember
 from team.constants import TeamMemberInvitationStatusChoices
+from core.response import CustomResponse as Response
 
 # App Imports
-from authentication.serializers import CreateUserSerializer, UserModelSerializer
+from authentication.serializers import (
+    CreateUserSerializer,
+    UserModelSerializer,
+    SignInSerializer,
+)
 from authentication.models import User
 
 
@@ -46,3 +50,24 @@ class AuthService:
 
             res_data = UserModelSerializer(instance=user).data
             return Response(data=res_data, status=status.HTTP_201_CREATED)
+
+    def sign_in(self, req: Request) -> Response:
+        data = req.data
+        serializer = SignInSerializer(data=data)
+
+        if serializer.is_valid(raise_exception=True):
+            if serializer.deep_error_exists:
+                print(serializer.deep_error_code)
+                return Response(
+                    status_text=serializer.deep_error_code,
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            serializer = UserModelSerializer(
+                instance=serializer.validated_data.get("user")
+            )
+
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_200_OK,
+            )

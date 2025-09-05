@@ -4,8 +4,10 @@ from uuid import UUID
 # REST Framework Imports
 from rest_framework.viewsets import ViewSet
 from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.decorators import action
+
+# Project Imports
+from core.response import CustomResponse as Response
 
 # App Imports
 from user.services.user_service import UserService

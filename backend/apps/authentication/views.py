@@ -1,8 +1,10 @@
 # REST Framework Imports
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.request import Request
+
+# Project Imports
+from core.response import CustomResponse as Response
 
 # App Imports
 from .services import AuthService, VerificationTokenService, SecurityLogService
@@ -14,6 +16,10 @@ class AuthViewSet(ViewSet):
     @action(methods=["POST"], detail=False)
     def signup(self, request: Request) -> Response:
         return self.service.sign_up(request)
+
+    @action(methods=["POST"], detail=False)
+    def signin(self, request: Request) -> Response:
+        return self.service.sign_in(request)
 
 
 class VerificationTokenViewSet(ViewSet):

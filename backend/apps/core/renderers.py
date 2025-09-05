@@ -3,7 +3,9 @@ from typing import Any, Union
 
 # REST Framework Imports
 from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
+
+# Project Imports
+from core.response import CustomResponse as Response
 
 
 class CustomJSONRenderer(JSONRenderer):
@@ -16,15 +18,19 @@ class CustomJSONRenderer(JSONRenderer):
     ) -> bytes:
         response: Response = renderer_context.get("response")
         status_code = response.status_code
+        status_text = response.status_text
+
+        if status_code >= 500 and status_text == "SUCCESS":
+            status_text = "UNKNOWN_ERROR"
+
+        elif status_code >= 400 and status_text == "SUCCESS":
+            status_text = "BAD_REQUEST"
+
         wrapped_data = {
             "status_code": status_code,
-            "status": (
-                "SUCCESS"
-                if status_code < 400
-                else ("FAILURE" if status_code < 500 else "ERROR")
-            ),
+            "status_text": status_text,
         }
-        if wrapped_data["status"] == "SUCCESS":
+        if wrapped_data["status_text"] == "SUCCESS":
             wrapped_data["data"] = data
         else:
             wrapped_data["errors"] = data
