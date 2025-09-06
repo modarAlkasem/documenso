@@ -28,6 +28,9 @@ class VerificationTokenViewSet(ViewSet):
     def create(self, request: Request) -> Response:
         return self.service.create(request)
 
+    def list(self, request: Request) -> Response:
+        return self.service.list(request)
+
     @action(
         methods=["POST"],
         detail=False,
@@ -35,9 +38,9 @@ class VerificationTokenViewSet(ViewSet):
     def verify(self, request: Request) -> Response:
         return self.service.verify(request)
 
-    @action(methods=["GET"], detail=False, url_path="retrieve-by-token")
-    def retrieve_by_token(self, request: Request) -> Response:
-        return self.service.retrieve_by_token(request)
+    # @action(methods=["GET"], detail=False, url_path="retrieve-by-token")
+    # def retrieve_by_token(self, request: Request) -> Response:
+    #     return self.service.retrieve_by_token(request)
 
 
 class SecurityLogViewSet(ViewSet):

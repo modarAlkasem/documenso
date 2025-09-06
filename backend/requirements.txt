@@ -3,3 +3,4 @@ psycopg2~=2.9.10
 djangorestframework~=3.16.0
 pytz==2025.2
 bcrypt~=4.3.0
+django-filter==25.1

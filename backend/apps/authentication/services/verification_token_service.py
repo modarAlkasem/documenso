@@ -26,6 +26,7 @@ from ..serializers import (
     RetrieveVerificationTokenByTokenSerializer,
 )
 from ..constants import EmailVerificationTokenStatusChoices, TokenIdentifierChoices
+from ..filters import VerificationTokenFilter
 
 
 class VerificationTokenService:
@@ -138,17 +139,32 @@ class VerificationTokenService:
             status=status.HTTP_200_OK,
         )
 
-    def retrieve_by_token(self, request: Request) -> Response:
-        query_params = request.query_params
-        serializer = RetrieveVerificationTokenByTokenSerializer(data=query_params)
+    # def retrieve_by_token(self, request: Request) -> Response:
+    #     query_params = request.query_params
+    #     serializer = RetrieveVerificationTokenByTokenSerializer(data=query_params)
 
-        if serializer.is_valid(raise_exception=True):
-            token = serializer.validated_data.get("token")
+    #     if serializer.is_valid(raise_exception=True):
+    #         token = serializer.validated_data.get("token")
 
-            response_data = VerificationTokenWithUserModelSerializer(
-                instance=token
-            ).data
-            return Response(
-                data=response_data,
-                status=status.HTTP_200_OK,
-            )
+    #         response_data = VerificationTokenWithUserModelSerializer(
+    #             instance=token
+    #         ).data
+    #         return Response(
+    #             data=response_data,
+    #             status=status.HTTP_200_OK,
+    #         )
+
+    def list(self, req: Request) -> Response:
+
+        query_params = req.query_params
+        filter = VerificationTokenFilter(query_params, VerificationToken.objects.all())
+
+        if not filter.is_valid():
+            return Response(data=filter.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        filtered_tokens = filter.qs
+        serializer = VerificationTokenWithUserModelSerializer(
+            instance=filtered_tokens, many=True
+        )
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
