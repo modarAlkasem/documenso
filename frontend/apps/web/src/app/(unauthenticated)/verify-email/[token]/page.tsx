@@ -10,7 +10,7 @@ import {
   EMAIL_VERIFICATION_STATE,
   verifyEmail,
 } from "@documenso/lib/server-only/user/verify-email";
-import { getVerificationTokenWithUser } from "@documenso/lib/api/auth/fetchers";
+import { getVerificationTokens } from "@documenso/lib/api/auth/fetchers";
 import { VerifyEmailClientPage } from "./client";
 
 export type VerifyEmailProps = {
@@ -88,7 +88,8 @@ export default async function VerifyEmailPage({
       </div>
     ))
     .with(EMAIL_VERIFICATION_STATE.VERIFIED, async () => {
-      const user = (await getVerificationTokenWithUser(token)).user;
+      const user = (await getVerificationTokens({ searchParams: { token } }))[0]
+        .user;
 
       const data = encryptSecondaryData({
         data: JSON.stringify({

@@ -26,8 +26,8 @@ export type VerificationToken = {
   token: string;
   completed: boolean;
   user: number;
-  created_at: Date;
-  expires_at: Date;
+  created_at: string;
+  expires_at: string;
 };
 
 export type CreateTokenVerificationTokenResponse = VerificationToken;
@@ -52,4 +52,22 @@ export type GetVerificationTokenWithUserResponse = Omit<
   "user"
 > & {
   user: User;
+};
+
+export type SignInPayload = {
+  email: string;
+  password: string;
+  totp?: string;
+  backup_code?: string;
+  user_agent: string;
+  ip_address?: string;
+};
+
+export type GetVerificationTokensSearchOptions = {
+  searchParams: {
+    user_id?: string;
+    user_email?: string;
+    created_at?: string;
+    token?: string;
+  };
 };

@@ -5,6 +5,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { type GoogleProfile } from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AppError, AppErrorCode } from "../errors/app-error";
+
 import { decryptSecondaryData } from "../server-only/crypto/decrypt";
 import {
   createAccount,
@@ -24,6 +25,10 @@ import {
 import { User } from "../api/users/types";
 import { formatSecureCookieName, useSecureCookies } from "../constants/auth";
 import { AuthProviderOptions } from "../api/account/types";
+import { ErrorCode } from "./error-codes";
+import { extractNextRequestMetadata } from "../universal/extract-request-metadata";
+import { getVerificationTokens, signIn } from "../api/auth/fetchers";
+import { jobsClient } from "../jobs/client";
 
 export const SUPPORTED_AUTH_PROVIDERS = {
   GOOGLE: "google",
@@ -98,7 +103,74 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
           id: user.id,
           name: user.name,
           email: user.email,
-          emailVerified: user.email_verified?.toISOString() ?? null,
+          emailVerified: user.email_verified ?? null,
+        };
+      },
+    }),
+
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+        totp: {
+          label: "Two factor code",
+          type: "text",
+          placeholder: "Code from authenticator app",
+        },
+        backupCode: {
+          label: "Backup Code",
+          type: "text",
+          placeholder: "Two-factor backup code",
+        },
+      },
+      authorize: async (credentials, req) => {
+        if (!credentials) {
+          throw new Error(ErrorCode.CREDENTIALS_NOT_FOUND);
+        }
+        const { email, password, totp, backupCode } = credentials;
+        const { ipAddress, userAgent } = extractNextRequestMetadata(req);
+        const user = await signIn({
+          email,
+          password,
+          totp,
+          backup_code: backupCode,
+          ip_address: ipAddress,
+          user_agent: userAgent,
+        }).catch(async (err) => {
+          const result = await getVerificationTokens({
+            searchParams: {
+              user_email: email,
+              created_at: "last",
+            },
+          });
+
+          if (
+            (err.message === ErrorCode.UNVERIFIED_EMAIL &&
+              result.length == 0) ||
+            new Date(result[0].expires_at) < new Date() ||
+            DateTime.fromISO(result[0].created_at).diffNow("minutes").minutes >
+              -5
+          ) {
+            jobsClient.triggerJob({
+              name: "send.signup.confirmation.email",
+              payload: {
+                email: email,
+              },
+            });
+          }
+
+          if (err.message == ErrorCode.INCORRECT_PASSWORD) {
+            err.message = ErrorCode.INCORRECT_EMAIL_PASSWORD;
+          }
+          throw err;
+        });
+
+        return {
+          id: user?.id,
+          name: user?.name,
+          email: user?.email,
+          emailVerified: user?.email_verified ?? null,
         };
       },
     }),
@@ -121,8 +193,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
           merged.id = retrieved.id as number;
           merged.email = retrieved.email;
           merged.name = retrieved.name;
-          merged.emailVerified =
-            retrieved.email_verified?.toISOString() ?? null;
+          merged.emailVerified = retrieved.email_verified ?? null;
         } catch (e) {
           return token;
         }
@@ -155,7 +226,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
 
         const updateUserOptions = {
           id: Number(merged.id),
-          email_verified: new Date(),
+          email_verified: new Date().toISOString(),
           identity: "GOOGLE",
         };
 

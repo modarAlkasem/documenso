@@ -55,8 +55,9 @@ class AccountWithRelatedUserModelSerializer(AccountModelSerializer):
         user = User.objects.filter(email=user_data.get("email")).first()
 
         if user_data.get("password") and (
-            hashed_pass := make_password(validated_data.get("password"))
+            hashed_pass := make_password(user_data.get("password"))
         ):
+
             user_data["password"] = hashed_pass
 
         if not user:
@@ -66,7 +67,7 @@ class AccountWithRelatedUserModelSerializer(AccountModelSerializer):
             user
             and validated_data.get("provider") == AccountProviderChoices.MANUAL.value
         ):
-            for key, value in validated_data.items():
+            for key, value in validated_data["user"].items():
                 setattr(user, key, value)
 
             user.save()

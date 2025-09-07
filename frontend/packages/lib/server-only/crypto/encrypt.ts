@@ -16,11 +16,11 @@ export const encryptSecondaryData = ({
   data,
   expiresAt,
 }: EncryptDataOptions) => {
-  if (!DOCUMENSO_ENCRYPTION_SECONDARY_KEY) {
+  if (!DOCUMENSO_ENCRYPTION_SECONDARY_KEY()) {
     throw new Error("Missing encryption key");
   }
   return symmetricEncrypt({
-    key: DOCUMENSO_ENCRYPTION_SECONDARY_KEY,
+    key: DOCUMENSO_ENCRYPTION_SECONDARY_KEY() as string,
     data: JSON.stringify({ data, expiresAt }),
   });
 };

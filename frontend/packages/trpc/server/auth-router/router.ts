@@ -16,6 +16,7 @@ export const authRouter = router({
       });
     }
     const { name, email, password, url, signature } = input;
+
     if (IS_BILLING_ENABLED() && url && url.length < 6) {
       throw new AppError(AppErrorCode.PREMIUM_PROFILE_URL, {
         message:
@@ -28,12 +29,14 @@ export const authRouter = router({
       provider_account_id: "",
       user: { name, email, password, url, signature },
     });
+
     await jobsClient.triggerJob({
       name: "send.signup.confirmation.email",
       payload: {
         email: account.user.email,
       },
     });
+
     return account.user;
   }),
 });

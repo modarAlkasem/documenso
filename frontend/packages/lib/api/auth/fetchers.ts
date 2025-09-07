@@ -7,6 +7,8 @@ import type {
   VerifyTokenResponse,
   createSecurityLogPayload,
   GetVerificationTokenWithUserResponse,
+  SignInPayload,
+  GetVerificationTokensSearchOptions,
 } from "./types";
 import { JSON_HEADERS, ACCEPT_JSON_HEADER } from "../common-headers";
 import * as JSON from "superjson";
@@ -71,29 +73,6 @@ export const verifyToken = async ({
   return json.data;
 };
 
-export const getVerificationTokenWithUser = async (
-  token: string
-): Promise<GetVerificationTokenWithUserResponse> => {
-  const result = await fetch(
-    `${API_BASE_URL()}/auth/verification-tokens/retrieve-by-token/?token=${token}`,
-    {
-      headers: ACCEPT_JSON_HEADER,
-    }
-  );
-  if (!result.ok) {
-    switch (result.status) {
-      case 404:
-        throw new Error("There is no verification token with given \'token\'");
-
-      default:
-        throw new Error("Something went wrong!");
-    }
-  }
-
-  const json = await result.json();
-  return json.data;
-};
-
 export const createSecurityLog = async ({
   userId,
   type,
@@ -107,4 +86,54 @@ export const createSecurityLog = async ({
   });
 
   if (!result.ok) throw new Error("Something went wrong.");
+};
+
+export const signIn = async ({
+  email,
+  password,
+  user_agent,
+  ip_address,
+}: SignInPayload): Promise<User> => {
+  const result = await fetch(`${API_BASE_URL()}/auth/signin/`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify({
+      email,
+      password,
+      user_agent,
+      ip_address,
+    }),
+  });
+
+  const jsonResult = await result.json();
+
+  if (!result.ok) {
+    throw new Error(jsonResult.status_text);
+  }
+
+  return jsonResult.data;
+};
+
+export const getVerificationTokens = async ({
+  searchParams,
+}: GetVerificationTokensSearchOptions): Promise<
+  Array<GetVerificationTokenWithUserResponse>
+> => {
+  const params = new URLSearchParams({
+    ...searchParams,
+  });
+
+  const result = await fetch(
+    `${API_BASE_URL()}/auth/verification-tokens/?${params.toString()}`,
+    {
+      headers: ACCEPT_JSON_HEADER,
+    }
+  );
+
+  if (!result.ok) {
+    throw new Error("Something went wrong!");
+  }
+
+  const json = await result.json();
+  return json.data;
 };

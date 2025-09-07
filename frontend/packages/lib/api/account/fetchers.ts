@@ -42,6 +42,7 @@ export const createAccount = async (
     body: JSON.stringify(account),
   });
   const json = await result.json();
+
   if (!result.ok) {
     switch (result.status) {
       case 400:

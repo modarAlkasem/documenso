@@ -1,5 +1,5 @@
 # Django Imports
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password, make_password
 
 # REST Framework Imports
 from rest_framework import serializers
@@ -21,13 +21,6 @@ required_true_dict = {"required": True}
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-
-    def validate(self, data: dict) -> dict:
-        if data.get("password", None):
-            data["password"] = make_password(data["password"])
-        if data.get("email", None):
-            data["email"] = data["email"].lower().strip()
-        return data
 
     class Meta:
         model = User
@@ -134,6 +127,7 @@ class SignInSerializer(serializers.Serializer):
             return attrs
 
         if not check_password(attrs.get("password"), user.password):
+
             self.deep_error_exists = True
             self.deep_error_code = SIGN_IN_ERROR_CODES.get("INCORRECT_PASSWORD")
 

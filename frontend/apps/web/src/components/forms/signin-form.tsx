@@ -143,10 +143,10 @@ export const SignInForm = ({
         if (result.error === TwoFactorEnabledErrorCode) {
         }
 
-        const errorMessage = ErrorCode[result.error];
+        const errorMessage = ERROR_MESSAGES[result.error];
 
         if (result.error === ErrorCode.UNVERIFIED_EMAIL) {
-          router.push("/unverified-email");
+          router.push("/unverified-account");
 
           toast({
             title: "Unable to sign in",
@@ -168,6 +168,7 @@ export const SignInForm = ({
       }
       router.push(result.url);
     } catch (err) {
+      console.log(err);
       toast({
         title: "An unknown error occured",
         description:

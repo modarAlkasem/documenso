@@ -36,13 +36,23 @@ export const extractNextApiRequestMetadata = (
   };
 };
 
-export const extractNextRequestMetadata = (req: NextRequest) => {
-  const realIp =
-    req.headers.get("x-forwarded-for")?.split(",")[0] ||
-    req.headers.get("x-real-ip");
+export const extractNextRequestMetadata = (req: any) => {
+  let realIp = null;
+  let userAgent = null;
+
+  if ("get" in req.headers) {
+    realIp =
+      req.headers?.get("x-forwarded-for")?.split(",")[0] ||
+      req.headers.get("x-real-ip");
+    userAgent = req.headers?.get("user-agent");
+  } else {
+    realIp =
+      req.headers["x-forwarded-for"]?.split(",")[0] || req.header["x-real-ip"];
+    userAgent = req.headers["user-agent"];
+  }
   const parsedIp = ZIPSchema.safeParse(realIp);
   const ipAddress = parsedIp.success ? parsedIp.data : undefined;
-  const userAgent = req.headers.get("user-agent");
+
   return {
     ipAddress,
     userAgent,

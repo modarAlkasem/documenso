@@ -12,6 +12,7 @@ from .models import VerificationToken
 
 class VerificationTokenFilter(FilterSet):
     user_id = filters.NumberFilter(field_name="user__id")
+    user_email = filters.CharFilter(field_name="user__email")
     created_at = filters.CharFilter(method="created_at_filter")
 
     class Meta:

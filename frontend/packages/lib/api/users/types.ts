@@ -9,7 +9,7 @@ export type User = {
   type?: string | null;
   customer_id?: string | null;
   email: string;
-  email_verified?: Date;
+  email_verified?: string;
   password?: string | null;
   source?: string | null;
   signature?: string | null;

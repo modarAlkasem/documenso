@@ -23,7 +23,8 @@ from authentication.models import User
 class AuthService:
 
     def sign_up(self, request: Request) -> Response:
-        req_data = request.data
+
+        req_data = request.data.get("json")
         serializer = CreateUserSerializer(data=req_data)
         if serializer.is_valid(raise_exception=True):
             user: User = serializer.save()
