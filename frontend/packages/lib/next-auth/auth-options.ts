@@ -285,7 +285,7 @@ export const NEXT_AUTH_OPTIONS: AuthOptions = {
 
         if (!retrievedAccount && result) {
           await createAccount({
-            provider: SUPPORTED_AUTH_PROVIDERS.GOOGLE,
+            provider: account.provider as AuthProviderOptions,
             provider_account_id: account.providerAccountId,
             type: "oauth",
             access_token: account.access_token,

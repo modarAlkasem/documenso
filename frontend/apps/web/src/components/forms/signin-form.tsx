@@ -178,6 +178,21 @@ export const SignInForm = ({
     }
   };
 
+  const onSignInWithGoogleClick = async () => {
+    try {
+      await signIn("google", {
+        callbackUrl,
+      });
+    } catch (err) {
+      toast({
+        title: "An unknown error occured",
+        description:
+          "We encountered an error while trying to sign you in, please try again later",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Form {...form}>
       <form
@@ -248,6 +263,7 @@ export const SignInForm = ({
             variant="outline"
             className="bg-background text-muted-foreground border"
             disabled={isSubmitting}
+            onClick={onSignInWithGoogleClick}
           >
             <FcGoogle className="mr-2 h-5 w-5" />
             Google
