@@ -168,7 +168,6 @@ export const SignInForm = ({
       }
       router.push(result.url);
     } catch (err) {
-      console.log(err);
       toast({
         title: "An unknown error occured",
         description:
