@@ -27,9 +27,7 @@ type TForgotPasswordSchema = z.infer<typeof ZForgotPasswordSchema>;
 type ForgotPasswordProps = {
   className?: string;
 };
-export const ForgotPasswordForm = async ({
-  className,
-}: ForgotPasswordProps) => {
+export const ForgotPasswordForm = ({ className }: ForgotPasswordProps) => {
   const form = useForm<TForgotPasswordSchema>({
     values: {
       email: "",

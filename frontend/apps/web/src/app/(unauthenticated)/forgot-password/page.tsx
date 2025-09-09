@@ -17,8 +17,8 @@ export default async function ForgotPassword() {
           No worries, it happens! Enter your email and we'll email you with a
           special link to reset your password.
         </p>
-        <ForgotPassword />
-        <p className="text-sm text-muted-foreground mt-6 ">
+        <ForgotPasswordForm />
+        <p className="text-sm text-muted-foreground mt-6">
           Remembered your password?{" "}
           <Link
             href="/signin"

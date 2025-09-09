@@ -1,6 +1,10 @@
 import { router, procedure } from "../trpc";
-import { ZConfirmationEmailMutationSchema } from "./schema";
+import {
+  ZConfirmationEmailMutationSchema,
+  ZForgotPasswordSchema,
+} from "./schema";
 import { jobsClient } from "@documenso/lib/jobs/client";
+import { forgotPassword } from "@documenso/lib/server-only/user/forgot-password";
 
 export const profileRouter = router({
   sendConfirmationEmail: procedure
@@ -13,5 +17,11 @@ export const profileRouter = router({
           email,
         },
       });
+    }),
+  forgotPassword: procedure
+    .input(ZForgotPasswordSchema)
+    .mutation(async ({ input }) => {
+      const { email } = input;
+      return await forgotPassword({ email });
     }),
 });
