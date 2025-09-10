@@ -8,7 +8,7 @@ from rest_framework import serializers
 from core.validators import EmailExistsValidator
 
 # App Imports
-from .models import User, VerificationToken, UserSecurityAuditLog
+from .models import User, VerificationToken, UserSecurityAuditLog, PasswordResetToken
 from .constants import (
     TokenIdentifierChoices,
     EmailVerificationTokenStatusChoices,
@@ -151,3 +151,28 @@ class SignInSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+class CreatePasswordResetTokenSerializer(serializers.Serializer):
+    email = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field="email",
+        error_messages={"does_not_exist": "Invalid email"},
+    )
+
+    def to_internal_value(self, data):
+        email = data.get("email", None)
+        if email:
+            data["email"] = email.strip().lower()
+        return super().to_internal_value(data)
+
+
+class PasswordResetTokenWithUserModelSerializer(serializers.ModelSerializer):
+    user = UserModelSerializer()
+
+    class Meta:
+        model = PasswordResetToken
+        fields = "__all__"
+        extra_kwargs = {
+            field.name: {"required": False} for field in PasswordResetToken._meta.fields
+        }

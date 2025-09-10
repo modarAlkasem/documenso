@@ -10,22 +10,18 @@ import {
 } from "../../constants/app";
 import { ForgotPasswordTemplate } from "@documenso/email/templates/forgot-password";
 import { getUserByUniqueField } from "../../api/users/fetchers";
+import { CreatePasswordResetTokenResponse } from "../../api/auth/types";
 
 export type sendForgotPasswordOptions = {
   userId: number;
 };
 
 export const sendForgotPassword = async ({
-  userId,
-}: sendForgotPasswordOptions) => {
-  const user = await getUserByUniqueField({
-    field: "id",
-    value: userId,
-  });
-
+  token,
+  user,
+}: CreatePasswordResetTokenResponse) => {
   const assetBaseUrl = NEXT_PUBLIC_WEBAPP_URL() ?? "http://localhost:3000";
 
-  const token = "Test";
   const resetPasswordLink = `${assetBaseUrl}/reset-password/${token}`;
 
   const template = createElement(ForgotPasswordTemplate, {

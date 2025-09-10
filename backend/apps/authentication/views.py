@@ -7,7 +7,12 @@ from rest_framework.request import Request
 from core.response import CustomResponse as Response
 
 # App Imports
-from .services import AuthService, VerificationTokenService, SecurityLogService
+from .services import (
+    AuthService,
+    VerificationTokenService,
+    SecurityLogService,
+    PasswordResetTokenService,
+)
 
 
 class AuthViewSet(ViewSet):
@@ -45,6 +50,13 @@ class VerificationTokenViewSet(ViewSet):
 
 class SecurityLogViewSet(ViewSet):
     service = SecurityLogService()
+
+    def create(self, request: Request) -> Response:
+        return self.service.create(request)
+
+
+class PasswordResetTokeniewSet(ViewSet):
+    service = PasswordResetTokenService()
 
     def create(self, request: Request) -> Response:
         return self.service.create(request)

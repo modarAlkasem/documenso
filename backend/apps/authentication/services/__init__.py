@@ -1,3 +1,4 @@
 from .auth_service import AuthService
 from .verification_token_service import VerificationTokenService
 from .security_log_service import SecurityLogService
+from .password_reset_token_service import PasswordResetTokenService

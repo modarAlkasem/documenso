@@ -23,7 +23,6 @@ from ..serializers import (
     VerifyTokenRequestSerializer,
     UserModelSerializer,
     VerificationTokenWithUserModelSerializer,
-    RetrieveVerificationTokenByTokenSerializer,
 )
 from ..constants import EmailVerificationTokenStatusChoices, TokenIdentifierChoices
 from ..filters import VerificationTokenFilter

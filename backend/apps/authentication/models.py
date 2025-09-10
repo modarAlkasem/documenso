@@ -176,3 +176,20 @@ class UserSecurityAuditLog(models.Model):
         verbose_name = "user security audit log"
         verbose_name_plural = "user security audit logs"
         ordering = ("-created_at",)
+
+
+class PasswordResetToken(models.Model):
+    token = models.CharField("token", max_length=36)
+    expires_at = models.DateTimeField("expires at")
+    user = models.ForeignKey(
+        User,
+        verbose_name="user",
+        on_delete=models.CASCADE,
+        related_name="password_reset_tokens",
+        related_query_name="passowrd_reset_token",
+    )
+    created_at = models.DateTimeField("created at", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "password reset token"
+        verbose_name_plural = "password reset tokens"

@@ -71,3 +71,15 @@ export type GetVerificationTokensSearchOptions = {
     token?: string;
   };
 };
+
+export type CreatePasswordResetTokenPaylaod = {
+  email: string;
+};
+
+export type CreatePasswordResetTokenResponse = {
+  id: number;
+  token: string;
+  expires_at: string;
+  user: User;
+  created_at: string;
+};

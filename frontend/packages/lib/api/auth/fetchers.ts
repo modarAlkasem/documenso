@@ -9,6 +9,8 @@ import type {
   GetVerificationTokenWithUserResponse,
   SignInPayload,
   GetVerificationTokensSearchOptions,
+  CreatePasswordResetTokenPaylaod,
+  CreatePasswordResetTokenResponse,
 } from "./types";
 import { JSON_HEADERS, ACCEPT_JSON_HEADER } from "../common-headers";
 import * as JSON from "superjson";
@@ -135,5 +137,31 @@ export const getVerificationTokens = async ({
   }
 
   const json = await result.json();
+  return json.data;
+};
+
+export const createPasswordResetToken = async ({
+  email,
+}: CreatePasswordResetTokenPaylaod): Promise<CreatePasswordResetTokenResponse> => {
+  const result = await fetch(`${API_BASE_URL()}/auth/password-reset-tokens/`, {
+    headers: JSON_HEADERS,
+    method: "POST",
+    body: JSON.stringify({
+      email,
+    }),
+  });
+
+  const json = await result.json();
+
+  if (!result.ok) {
+    switch (result.status) {
+      case 400:
+        throw new Error(json.status_text);
+
+      default:
+        throw new Error("Something went wrong.");
+    }
+  }
+
   return json.data;
 };

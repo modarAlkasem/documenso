@@ -104,32 +104,3 @@ class Account(TimeStampedUUIDModel):
                 name="provider_account_id_unique",
             )
         ]
-
-
-class PasswordResetToken(models.Model):
-    token = models.CharField(
-        _("token"),
-        max_length=255,
-        help_text="Reset Password's token sent to user's email",
-    )
-
-    expires_at = models.DateTimeField(
-        _("expires at"),
-        help_text="Specify when access token or session will expire.",
-    )
-    user = models.ForeignKey(
-        "authentication.User",
-        verbose_name=_("user"),
-        on_delete=models.CASCADE,
-        related_name="password_reset_tokens",
-        related_query_name="password_reset_token",
-    )
-    created_at = models.DateTimeField(
-        _("created at"),
-        auto_now_add=True,
-    )
-
-    class Meta:
-        ordering = ["-created_at"]
-        verbose_name = _("password reset token")
-        verbose_name_plural = _("password reset tokens")
