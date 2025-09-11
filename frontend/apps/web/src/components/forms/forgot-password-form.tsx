@@ -17,6 +17,7 @@ import {
 } from "@documenso/ui/primitives/form/form";
 import { toast } from "@documenso/ui/primitives/use-toaste";
 import { cn } from "@documenso/ui/lib/utils";
+import { trpc } from "@documenso/trpc/react";
 
 const ZForgotPasswordSchema = z.object({
   email: z.string().email(),
@@ -34,11 +35,23 @@ export const ForgotPasswordForm = ({ className }: ForgotPasswordProps) => {
     },
     resolver: zodResolver(ZForgotPasswordSchema),
   });
-
+  const router = useRouter();
   const isSubmitting = form.formState.isSubmitting;
 
+  const { mutateAsync: forgotPassword } =
+    trpc.profile.forgotPassword.useMutation();
+
   const onFormSubmit = async ({ email }: TForgotPasswordSchema) => {
-    console.log("Form is submitting...");
+    await forgotPassword({ email }).catch((err) => null);
+
+    toast({
+      title: "Password Reset Email Sent",
+      description:
+        "A password reset email has been sent, If you have an account you should see it in your inbox shortly.",
+      duration: 5000,
+    });
+    form.reset();
+    router.push("/check-email");
   };
 
   return (
