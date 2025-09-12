@@ -1,7 +1,9 @@
 # REST Framework Imports
 from rest_framework.request import Request
 from rest_framework import status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, ErrorDetail
+from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
+
 
 # Project Imports
 from authentication.models import User
@@ -14,6 +16,7 @@ from core.response import CustomResponse as Response
 
 # App Imports
 from ..serializers import (
+    ResetPasswordSerializer,
     RetrieveUserWithEmailSerializer,
     CheckUserUniqueFieldValueParamSerializer,
 )
@@ -104,6 +107,34 @@ class UserService:
             response = {
                 "data": serializer.errors,
                 "status": status.HTTP_400_BAD_REQUEST,
+            }
+
+        return Response(**response)
+
+    def reset_password(self, request: Request, pk: int) -> Response:
+        data = request.data
+        user = User.objects.filter(id=pk).first()
+        serializer = ResetPasswordSerializer(data=data, context={"user": user})
+        response = None
+
+        try:
+            if serializer.is_valid(raise_exception=True):
+                user = UserModelSerializer().update(
+                    validated_data=serializer.validated_data, instance=user
+                )
+
+                response = {
+                    "data": UserModelSerializer(instance=user).data,
+                    "status": status.HTTP_200_OK,
+                }
+        except ValidationError as e:
+
+            response = {
+                "data": serializer.errors,
+                "status": status.HTTP_400_BAD_REQUEST,
+                "status_text": getattr(
+                    e.detail.serializer, "deep_error_details", "BAD_REQUEST"
+                ),
             }
 
         return Response(**response)

@@ -1,5 +1,6 @@
 # Django Imports
 from django.contrib.auth.hashers import check_password, make_password
+from django.db.transaction import atomic
 
 # REST Framework Imports
 from rest_framework import serializers
@@ -33,6 +34,28 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 
 class UserModelSerializer(CreateUserSerializer):
+    def update(self, instance, validated_data):
+        if "password" in validated_data:
+            new_password = validated_data.get("password", None)
+            hashed_password = make_password(new_password)
+
+            instance.password = hashed_password
+            instance.save()
+
+            with atomic(durable=True):
+                PasswordResetToken.objects.filter(user=instance).delete()
+
+                audit_log_dict = {
+                    "user": instance,
+                    "type": UserSecurityAuditLogTypeChoices.PASSWORD_RESET.value,
+                    "ip_address": validated_data.get("ip_address", None),
+                    "user_agent": validated_data.get("user_agent", None),
+                }
+                UserSecurityAuditLog.objects.create(**audit_log_dict)
+
+            return instance
+
+        return super().update(instance, validated_data)
 
     class Meta:
         model = User
