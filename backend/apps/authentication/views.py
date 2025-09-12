@@ -26,6 +26,10 @@ class AuthViewSet(ViewSet):
     def signin(self, request: Request) -> Response:
         return self.service.sign_in(request)
 
+    @action(url_path="reset-password", methods=["POST"])
+    def reset_password(self, request: Request) -> Response:
+        return self.service.reset_password(request, pk)
+
 
 class VerificationTokenViewSet(ViewSet):
     service = VerificationTokenService()

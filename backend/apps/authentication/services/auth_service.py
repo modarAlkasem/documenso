@@ -5,6 +5,7 @@ from django.db import DatabaseError
 # REST Framework Imports
 from rest_framework import status
 from rest_framework.request import Request
+from rest_framework.exceptions import ValidationError
 
 # Project Imports
 from team.models import TeamMemberInvite, TeamMember
@@ -16,6 +17,7 @@ from authentication.serializers import (
     CreateUserSerializer,
     UserModelSerializer,
     SignInSerializer,
+    ResetPasswordSerializer,
 )
 from authentication.models import User
 
@@ -72,3 +74,31 @@ class AuthService:
                 data=serializer.data,
                 status=status.HTTP_200_OK,
             )
+
+    def reset_password(self, request: Request) -> Response:
+        data = request.data.get("json")
+        serializer = ResetPasswordSerializer(data=data)
+        response = None
+
+        try:
+            if serializer.is_valid(raise_exception=True):
+                old_user = serializer.validated_data.get("token").user
+                user = UserModelSerializer().update(
+                    validated_data=serializer.validated_data, instance=old_user
+                )
+
+                response = {
+                    "data": UserModelSerializer(instance=user).data,
+                    "status": status.HTTP_200_OK,
+                }
+        except ValidationError as e:
+
+            response = {
+                "data": serializer.errors,
+                "status": status.HTTP_400_BAD_REQUEST,
+                "status_text": getattr(
+                    e.detail.serializer, "deep_error_details", "BAD_REQUEST"
+                ),
+            }
+
+        return Response(**response)

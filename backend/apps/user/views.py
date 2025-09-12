@@ -27,10 +27,6 @@ class UserViewSet(ViewSet):
     def retrieve_by_unique_field(self, request: Request) -> Response:
         return self.service.retrieve_by_unique_field(request)
 
-    @action(detail=True, url_path="reset-password", methods=["POST"])
-    def reset_password(self, request: Request, pk: UUID) -> Response:
-        return self.service.reset_password(request, pk)
-
 
 class UnauthUserViewSet(ViewSet):
     service = UserService()

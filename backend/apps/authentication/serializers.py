@@ -1,6 +1,7 @@
 # Django Imports
 from django.contrib.auth.hashers import check_password, make_password
 from django.db.transaction import atomic
+from django.utils import timezone
 
 # REST Framework Imports
 from rest_framework import serializers
@@ -199,3 +200,38 @@ class PasswordResetTokenWithUserModelSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             field.name: {"required": False} for field in PasswordResetToken._meta.fields
         }
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+
+    token = serializers.CharField(min_length=36, max_length=36)
+    password = serializers.CharField(max_length=72, min_length=8)
+    ip_address = serializers.IPAddressField()
+    user_agent = serializers.CharField()
+
+    def validate(self, attrs):
+        token = PasswordResetToken.objects.filter(
+            token=attrs.get("token", None)
+        ).first()
+
+        if not token:
+            self.deep_error_details = "INVALID_TOKEN"
+            raise serializers.ValidationError(code="INVALID_TOKEN")
+
+        if token.expires_at < timezone.now():
+            self.deep_error_details = "INVALID_TOKEN"
+            raise serializers.ValidationError(code="INVALID_TOKEN")
+
+        user = token.user
+
+        if not user:
+            raise serializers.ValidationError({"user": "User not found"})
+
+        old_password = user.password
+
+        if check_password(attrs.get("password"), old_password):
+            self.deep_error_details = "SAME_PASSWORD"
+            raise serializers.ValidationError(code="SAME_PASSWORD")
+
+        attrs["token"] = token
+        return attrs
