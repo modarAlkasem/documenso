@@ -30,3 +30,10 @@ export type GetUserByUniqueFieldPayload = {
   field: "id" | "email" | "url";
   value: number | string;
 };
+
+export type ResetPasswordPayload = {
+  password: string;
+  token: string;
+  ip_address?: string;
+  user_agent?: string;
+};

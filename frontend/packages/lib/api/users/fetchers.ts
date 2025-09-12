@@ -6,6 +6,7 @@ import type {
   User,
   UpdateUserPayload,
   GetUserByUniqueFieldPayload,
+  ResetPasswordPayload,
 } from "./types";
 
 export const getUser = async (userId: number): Promise<User> => {
@@ -87,5 +88,31 @@ export const getUserByUniqueField = async ({
   }
 
   const json = await result.json();
+  return json.data;
+};
+
+export const resetPassword = async ({
+  password,
+  token,
+  ip_address,
+  user_agent,
+}: ResetPasswordPayload): Promise<User> => {
+  const result = await fetch(`${API_BASE_URL()}/auth/reset-password/`, {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ password, token, ip_address, user_agent }),
+  });
+
+  const json = await result.json();
+  if (!result.ok) {
+    switch (result.status) {
+      case 400:
+        throw new AppError(json.staus_text);
+
+      default:
+        throw new AppError(AppErrorCode.UNKNOWN_ERROR);
+    }
+  }
+
   return json.data;
 };
